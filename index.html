@@ -1329,9 +1329,10 @@
             return bookings.find(b => {
                 if (b.umbrella !== umbrella) return false;
                 
-                const checkIn = new Date(b.check_in);
-                const checkOut = new Date(b.check_out);
-                const cellDate = new Date(dateStr);
+                // Normalizza tutte le date a mezzanotte locale per confronto accurato
+                const checkIn = new Date(b.check_in + 'T00:00:00');
+                const checkOut = new Date(b.check_out + 'T00:00:00');
+                const cellDate = new Date(dateStr + 'T00:00:00');
                 
                 // La prenotazione va dal check-in al giorno PRIMA del check-out
                 const dayBefore = new Date(checkOut);
@@ -1658,7 +1659,11 @@
         }
         
         function formatDate(date) {
-            return date.toISOString().split('T')[0];
+            // Usa le componenti locali per evitare problemi di fuso orario
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
         }
         
         function formatDateIT(dateStr) {
