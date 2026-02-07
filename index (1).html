@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piano Spiaggia 2026 - Hotel Universal</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --gold-light: #F4E5C2;
+            --gold-dark: #B8941E;
+            --silver: #C0C0C0;
+            --silver-light: #E8E8E8;
+            --silver-dark: #A8A8A8;
+            --bronze: #CD7F32;
+            --bronze-light: #E6BA8F;
+            --bronze-dark: #A86428;
+            --ocean: #0077BE;
+            --ocean-dark: #005A8C;
+            --sand: #F5DEB3;
+            --white: #FFFFFF;
+            --gray-100: #F7FAFC;
+            --gray-200: #EDF2F7;
+            --gray-300: #E2E8F0;
+            --gray-600: #718096;
+            --gray-800: #2D3748;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #E0F2FE 0%, #FEF3C7 50%, #FED7AA 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1900px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--ocean-dark) 0%, var(--ocean) 100%);
+            color: var(--white);
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        .sync-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.15);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .sync-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #10B981;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.95); }
+        }
+        
+        .controls {
+            background: var(--gray-100);
+            padding: 25px 40px;
+            border-bottom: 3px solid var(--ocean);
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .control-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .control-group select,
+        .control-group input {
+            padding: 10px 15px;
+            border: 2px solid var(--gray-300);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Montserrat', sans-serif;
+            background: var(--white);
+            transition: all 0.3s ease;
+        }
+        
+        .control-group select:focus,
+        .control-group input:focus {
+            outline: none;
+            border-color: var(--ocean);
+            box-shadow: 0 0 0 3px rgba(0, 119, 190, 0.1);
+        }
+        
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--ocean);
+            color: var(--white);
+        }
+        
+        .btn-primary:hover {
+            background: var(--ocean-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 119, 190, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--gray-300);
+            color: var(--gray-800);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--gray-600);
+            color: var(--white);
+        }
+        
+        .legend {
+            background: var(--gray-100);
+            padding: 20px 40px;
+            border-top: 2px solid var(--gray-200);
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .legend-title {
+            font-weight: 600;
+            color: var(--gray-800);
+            font-size: 14px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+        
+        .legend-color {
+            width: 40px;
+            height: 24px;
+            border-radius: 6px;
+            border: 2px solid var(--gray-300);
+        }
+        
+        .legend-color.emozione {
+            background: repeating-linear-gradient(
+                45deg,
+                var(--gold-light),
+                var(--gold-light) 10px,
+                var(--gold) 10px,
+                var(--gold) 20px
+            );
+        }
+        
+        .legend-color.abbraccio {
+            background: repeating-linear-gradient(
+                45deg,
+                var(--silver-light),
+                var(--silver-light) 10px,
+                var(--silver) 10px,
+                var(--silver) 20px
+            );
+        }
+        
+        .legend-color.carezza {
+            background: repeating-linear-gradient(
+                45deg,
+                var(--bronze-light),
+                var(--bronze-light) 10px,
+                var(--bronze) 10px,
+                var(--bronze) 20px
+            );
+        }
+        
+        .calendar-wrapper {
+            padding: 30px 40px;
+            overflow-x: auto;
+        }
+        
+        .calendar {
+            display: grid;
+            grid-template-columns: 120px repeat(auto-fill, minmax(45px, 1fr));
+            gap: 0;
+            min-width: 1200px;
+            border: 2px solid var(--gray-300);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .row-header {
+            background: var(--ocean);
+            color: var(--white);
+            padding: 12px;
+            font-weight: 600;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 2px solid var(--white);
+            position: sticky;
+            left: 0;
+            z-index: 10;
+        }
+        
+        .row-header.emozione {
+            background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
+        }
+        
+        .row-header.abbraccio {
+            background: linear-gradient(135deg, var(--silver-dark) 0%, var(--silver) 100%);
+        }
+        
+        .row-header.carezza {
+            background: linear-gradient(135deg, var(--bronze-dark) 0%, var(--bronze) 100%);
+        }
+        
+        .day-header {
+            background: var(--gray-200);
+            padding: 10px 5px;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+            border-right: 1px solid var(--gray-300);
+            border-bottom: 2px solid var(--gray-300);
+            color: var(--gray-800);
+        }
+        
+        .day-header .day-num {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+        
+        .day-header .day-name {
+            display: block;
+            font-size: 9px;
+            text-transform: uppercase;
+            opacity: 0.7;
+        }
+        
+        .cell {
+            min-height: 60px;
+            border-right: 1px solid var(--gray-300);
+            border-bottom: 1px solid var(--gray-300);
+            background: var(--white);
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        
+        .cell:hover {
+            background: var(--gray-100);
+        }
+        
+        .cell.occupied {
+            cursor: move;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            color: rgba(0, 0, 0, 0.7);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cell.occupied.emozione {
+            background: repeating-linear-gradient(
+                45deg,
+                var(--gold-light),
+                var(--gold-light) 10px,
+                var(--gold) 10px,
+                var(--gold) 20px
+            );
+        }
+        
+        .cell.occupied.abbraccio {
+            background: repeating-linear-gradient(
+                45deg,
+                var(--silver-light),
+                var(--silver-light) 10px,
+                var(--silver) 10px,
+                var(--silver) 20px
+            );
+        }
+        
+        .cell.occupied.carezza {
+            background: repeating-linear-gradient(
+                45deg,
+                var(--bronze-light),
+                var(--bronze-light) 10px,
+                var(--bronze) 10px,
+                var(--bronze) 20px
+            );
+        }
+        
+        .cell.occupied.locked {
+            opacity: 0.9;
+            position: relative;
+        }
+        
+        .cell.occupied.locked.emozione {
+            background: repeating-linear-gradient(
+                45deg,
+                var(--gold),
+                var(--gold) 10px,
+                var(--gold-dark) 10px,
+                var(--gold-dark) 20px
+            );
+        }
+        
+        .cell.occupied.locked.abbraccio {
+            background: repeating-linear-gradient(
+                45deg,
+                var(--silver),
+                var(--silver) 10px,
+                var(--silver-dark) 10px,
+                var(--silver-dark) 20px
+            );
+        }
+        
+        .cell.occupied.locked.carezza {
+            background: repeating-linear-gradient(
+                45deg,
+                var(--bronze),
+                var(--bronze) 10px,
+                var(--bronze-dark) 10px,
+                var(--bronze-dark) 20px
+            );
+        }
+        
+        .cell.occupied.locked::after {
+            content: '🔒';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 10px;
+            opacity: 0.7;
+        }
+        
+        .cell.first-day {
+            border-left: 3px solid var(--gray-800);
+        }
+        
+        .cell.last-day {
+            border-right: 3px solid var(--gray-800);
+        }
+        
+        .cell.middle-day {
+            border-top: 3px solid var(--gray-800);
+            border-bottom: 3px solid var(--gray-800);
+        }
+        
+        .tooltip {
+            position: absolute;
+            background: var(--gray-800);
+            color: var(--white);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 13px;
+            min-width: 250px;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            pointer-events: none;
+            animation: fadeIn 0.2s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .tooltip-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .tooltip-row:last-child {
+            border-bottom: none;
+        }
+        
+        .tooltip-label {
+            font-weight: 600;
+            opacity: 0.8;
+        }
+        
+        .tooltip-value {
+            font-weight: 500;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--gray-200);
+        }
+        
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--ocean);
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: var(--gray-600);
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            background: var(--gray-200);
+            color: var(--gray-800);
+            transform: rotate(90deg);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--gray-800);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--gray-300);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--ocean);
+            box-shadow: 0 0 0 3px rgba(0, 119, 190, 0.1);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+            font-size: 14px;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid var(--gray-200);
+        }
+        
+        .btn-danger {
+            background: #EF4444;
+            color: var(--white);
+        }
+        
+        .btn-danger:hover {
+            background: #DC2626;
+        }
+        
+        .btn-warning {
+            background: #F59E0B;
+            color: var(--white);
+        }
+        
+        .btn-warning:hover {
+            background: #D97706;
+        }
+        
+        .loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--white);
+            padding: 30px 50px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            z-index: 3000;
+            text-align: center;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid var(--gray-300);
+            border-top: 4px solid var(--ocean);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .controls {
+                padding: 20px;
+            }
+            
+            .calendar-wrapper {
+                padding: 20px;
+            }
+            
+            .modal-content {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>🏖️ Piano Spiaggia 2026</h1>
+                <div class="header-subtitle">Hotel Universal - Gestione Ombrelloni</div>
+            </div>
+            <div class="sync-indicator">
+                <div class="sync-dot"></div>
+                <span>Sincronizzato con Supabase</span>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label>Mese</label>
+                <select id="monthSelect">
+                    <option value="5">Giugno</option>
+                    <option value="6">Luglio</option>
+                    <option value="7">Agosto</option>
+                    <option value="8">Settembre</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label>Anno</label>
+                <select id="yearSelect">
+                    <option value="2026">2026</option>
+                </select>
+            </div>
+            
+            <button class="btn btn-primary" onclick="openAddModal()">
+                ➕ Nuova Prenotazione
+            </button>
+            
+            <button class="btn btn-secondary" onclick="refreshData()">
+                🔄 Aggiorna
+            </button>
+        </div>
+        
+        <div class="legend">
+            <span class="legend-title">Formule Spiaggia:</span>
+            <div class="legend-item">
+                <div class="legend-color emozione"></div>
+                <span><strong>Emozione</strong> - Fila 1-3 (1 ombr. + 2 lettini king)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color abbraccio"></div>
+                <span><strong>Abbraccio</strong> - Fila 4-10 (1 ombr. + 2 lettini king)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color carezza"></div>
+                <span><strong>Carezza</strong> - Fila 11-14 (1 ombr. + 2 lettini)</span>
+            </div>
+            <div class="legend-item">
+                <span>🔒 = Non spostare (colore più acceso)</span>
+            </div>
+        </div>
+        
+        <div class="calendar-wrapper">
+            <div id="calendar" class="calendar"></div>
+        </div>
+    </div>
+    
+    <!-- Modal Aggiungi/Modifica Prenotazione -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Nuova Prenotazione</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            
+            <form id="bookingForm">
+                <input type="hidden" id="bookingId">
+                
+                <div class="form-group">
+                    <label>Nome Ospite *</label>
+                    <input type="text" id="guestName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Ombrellone (Fila) *</label>
+                    <select id="umbrella" required>
+                        <optgroup label="Emozione (Fila 1-3)">
+                            <option value="1">Fila 1</option>
+                            <option value="2">Fila 2</option>
+                            <option value="3">Fila 3</option>
+                        </optgroup>
+                        <optgroup label="Abbraccio (Fila 4-10)">
+                            <option value="4">Fila 4</option>
+                            <option value="5">Fila 5</option>
+                            <option value="6">Fila 6</option>
+                            <option value="7">Fila 7</option>
+                            <option value="8">Fila 8</option>
+                            <option value="9">Fila 9</option>
+                            <option value="10">Fila 10</option>
+                        </optgroup>
+                        <optgroup label="Carezza (Fila 11-14)">
+                            <option value="11">Fila 11</option>
+                            <option value="12">Fila 12</option>
+                            <option value="13">Fila 13</option>
+                            <option value="14">Fila 14</option>
+                        </optgroup>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Check-in *</label>
+                    <input type="date" id="checkIn" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Check-out *</label>
+                    <input type="date" id="checkOut" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Targa Auto</label>
+                    <input type="text" id="carPlate">
+                </div>
+                
+                <div class="form-group">
+                    <label>Note</label>
+                    <textarea id="notes"></textarea>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="locked">
+                    <label for="locked">🔒 Non spostare (blocca prenotazione)</label>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Annulla</button>
+                    <button type="button" class="btn btn-danger" id="deleteBtn" onclick="deleteBooking()" style="display: none;">Elimina</button>
+                    <button type="button" class="btn btn-warning" id="splitBtn" onclick="splitBooking()" style="display: none;">Dividi</button>
+                    <button type="submit" class="btn btn-primary">Salva</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Loading -->
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <div>Caricamento...</div>
+    </div>
+    
+    <script>
+        // CONFIGURAZIONE SUPABASE
+        const SUPABASE_URL = 'https://nsettzmyswlfrnzwvpsq.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_6fITZlGmtimiHA-QSznXsA_YIV0DApr';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        let bookings = [];
+        let currentMonth = 5; // Giugno (0-indexed)
+        let currentYear = 2026;
+        let draggedBooking = null;
+        let tooltip = null;
+        
+        // Inizializzazione
+        document.addEventListener('DOMContentLoaded', async () => {
+            initializeControls();
+            await loadBookings();
+            renderCalendar();
+            setupRealtimeSubscription();
+        });
+        
+        function initializeControls() {
+            document.getElementById('monthSelect').value = currentMonth;
+            document.getElementById('yearSelect').value = currentYear;
+            
+            document.getElementById('monthSelect').addEventListener('change', (e) => {
+                currentMonth = parseInt(e.target.value);
+                renderCalendar();
+            });
+            
+            document.getElementById('yearSelect').addEventListener('change', (e) => {
+                currentYear = parseInt(e.target.value);
+                renderCalendar();
+            });
+            
+            document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await saveBooking();
+            });
+        }
+        
+        async function loadBookings() {
+            showLoading();
+            try {
+                const { data, error } = await supabase
+                    .from('beach_bookings')
+                    .select('*')
+                    .order('umbrella', { ascending: true })
+                    .order('check_in', { ascending: true });
+                
+                if (error) throw error;
+                bookings = data || [];
+            } catch (error) {
+                console.error('Errore caricamento:', error);
+                alert('Errore durante il caricamento delle prenotazioni');
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        function setupRealtimeSubscription() {
+            supabase
+                .channel('beach_bookings_changes')
+                .on('postgres_changes', 
+                    { event: '*', schema: 'public', table: 'beach_bookings' },
+                    async (payload) => {
+                        await loadBookings();
+                        renderCalendar();
+                    }
+                )
+                .subscribe();
+        }
+        
+        function renderCalendar() {
+            const calendar = document.getElementById('calendar');
+            calendar.innerHTML = '';
+            
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            
+            // Header con i giorni
+            calendar.appendChild(createEmptyCell());
+            for (let day = 1; day <= daysInMonth; day++) {
+                calendar.appendChild(createDayHeader(day));
+            }
+            
+            // Righe per ogni fila di ombrelloni
+            for (let umbrella = 1; umbrella <= 14; umbrella++) {
+                calendar.appendChild(createRowHeader(umbrella));
+                
+                for (let day = 1; day <= daysInMonth; day++) {
+                    calendar.appendChild(createCell(umbrella, day));
+                }
+            }
+        }
+        
+        function createEmptyCell() {
+            const cell = document.createElement('div');
+            cell.className = 'row-header';
+            cell.textContent = 'Fila';
+            return cell;
+        }
+        
+        function createDayHeader(day) {
+            const date = new Date(currentYear, currentMonth, day);
+            const dayNames = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
+            
+            const header = document.createElement('div');
+            header.className = 'day-header';
+            header.innerHTML = `
+                <span class="day-num">${day}</span>
+                <span class="day-name">${dayNames[date.getDay()]}</span>
+            `;
+            return header;
+        }
+        
+        function createRowHeader(umbrella) {
+            const header = document.createElement('div');
+            const formula = getFormula(umbrella);
+            header.className = `row-header ${formula}`;
+            header.textContent = `Fila ${umbrella}`;
+            return header;
+        }
+        
+        function createCell(umbrella, day) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.dataset.umbrella = umbrella;
+            cell.dataset.day = day;
+            
+            const date = new Date(currentYear, currentMonth, day);
+            const dateStr = formatDate(date);
+            
+            const booking = findBookingForCell(umbrella, dateStr);
+            
+            if (booking) {
+                cell.classList.add('occupied');
+                cell.classList.add(booking.formula);
+                if (booking.locked) {
+                    cell.classList.add('locked');
+                }
+                
+                // Aggiungi bordi per prenotazioni continue
+                const checkIn = new Date(booking.check_in);
+                const checkOut = new Date(booking.check_out);
+                const dayBefore = new Date(checkOut);
+                dayBefore.setDate(dayBefore.getDate() - 1);
+                
+                if (date.getTime() === checkIn.getTime()) {
+                    cell.classList.add('first-day');
+                } else if (date.getTime() === dayBefore.getTime()) {
+                    cell.classList.add('last-day');
+                } else {
+                    cell.classList.add('middle-day');
+                }
+                
+                cell.dataset.bookingId = booking.id;
+                cell.draggable = !booking.locked;
+                
+                // Eventi mouse
+                cell.addEventListener('mouseenter', (e) => showTooltip(e, booking));
+                cell.addEventListener('mouseleave', hideTooltip);
+                cell.addEventListener('click', () => openEditModal(booking));
+                
+                // Eventi drag & drop
+                if (!booking.locked) {
+                    cell.addEventListener('dragstart', handleDragStart);
+                    cell.addEventListener('dragend', handleDragEnd);
+                }
+            }
+            
+            cell.addEventListener('dragover', handleDragOver);
+            cell.addEventListener('drop', handleDrop);
+            
+            return cell;
+        }
+        
+        function getFormula(umbrella) {
+            if (umbrella >= 1 && umbrella <= 3) return 'emozione';
+            if (umbrella >= 4 && umbrella <= 10) return 'abbraccio';
+            if (umbrella >= 11 && umbrella <= 14) return 'carezza';
+            return '';
+        }
+        
+        function findBookingForCell(umbrella, dateStr) {
+            return bookings.find(b => {
+                if (b.umbrella !== umbrella) return false;
+                
+                const checkIn = new Date(b.check_in);
+                const checkOut = new Date(b.check_out);
+                const cellDate = new Date(dateStr);
+                
+                // La prenotazione va dal check-in al giorno PRIMA del check-out
+                const dayBefore = new Date(checkOut);
+                dayBefore.setDate(dayBefore.getDate() - 1);
+                
+                return cellDate >= checkIn && cellDate <= dayBefore;
+            });
+        }
+        
+        function showTooltip(e, booking) {
+            hideTooltip();
+            
+            tooltip = document.createElement('div');
+            tooltip.className = 'tooltip';
+            tooltip.innerHTML = `
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Ospite:</span>
+                    <span class="tooltip-value">${booking.guest_name}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Formula:</span>
+                    <span class="tooltip-value">${capitalizeFormula(booking.formula)}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Check-in:</span>
+                    <span class="tooltip-value">${formatDateIT(booking.check_in)}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Check-out:</span>
+                    <span class="tooltip-value">${formatDateIT(booking.check_out)}</span>
+                </div>
+                ${booking.car_plate ? `
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Targa:</span>
+                    <span class="tooltip-value">${booking.car_plate}</span>
+                </div>
+                ` : ''}
+                ${booking.notes ? `
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Note:</span>
+                    <span class="tooltip-value">${booking.notes}</span>
+                </div>
+                ` : ''}
+                ${booking.locked ? `
+                <div class="tooltip-row">
+                    <span class="tooltip-value" style="color: #F59E0B;">🔒 Prenotazione bloccata</span>
+                </div>
+                ` : ''}
+            `;
+            
+            document.body.appendChild(tooltip);
+            
+            const rect = e.target.getBoundingClientRect();
+            tooltip.style.left = rect.left + window.scrollX + 'px';
+            tooltip.style.top = (rect.bottom + window.scrollY + 10) + 'px';
+        }
+        
+        function hideTooltip() {
+            if (tooltip) {
+                tooltip.remove();
+                tooltip = null;
+            }
+        }
+        
+        function handleDragStart(e) {
+            const bookingId = parseInt(e.target.dataset.bookingId);
+            draggedBooking = bookings.find(b => b.id === bookingId);
+            e.dataTransfer.effectAllowed = 'move';
+            e.target.style.opacity = '0.5';
+        }
+        
+        function handleDragEnd(e) {
+            e.target.style.opacity = '1';
+            draggedBooking = null;
+        }
+        
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+        
+        async function handleDrop(e) {
+            e.preventDefault();
+            
+            if (!draggedBooking) return;
+            
+            const newUmbrella = parseInt(e.target.dataset.umbrella);
+            const newDay = parseInt(e.target.dataset.day);
+            
+            if (!newUmbrella || !newDay) return;
+            
+            // Calcola la nuova data di check-in
+            const newCheckIn = new Date(currentYear, currentMonth, newDay);
+            
+            // Calcola la durata della prenotazione originale
+            const oldCheckIn = new Date(draggedBooking.check_in);
+            const oldCheckOut = new Date(draggedBooking.check_out);
+            const duration = Math.ceil((oldCheckOut - oldCheckIn) / (1000 * 60 * 60 * 24));
+            
+            // Calcola il nuovo check-out
+            const newCheckOut = new Date(newCheckIn);
+            newCheckOut.setDate(newCheckOut.getDate() + duration);
+            
+            // Aggiorna la formula in base alla nuova fila
+            const newFormula = getFormula(newUmbrella);
+            
+            try {
+                showLoading();
+                
+                const { error } = await supabase
+                    .from('beach_bookings')
+                    .update({
+                        umbrella: newUmbrella,
+                        check_in: formatDate(newCheckIn),
+                        check_out: formatDate(newCheckOut),
+                        formula: newFormula
+                    })
+                    .eq('id', draggedBooking.id);
+                
+                if (error) throw error;
+                
+                await loadBookings();
+                renderCalendar();
+            } catch (error) {
+                console.error('Errore spostamento:', error);
+                alert('Errore durante lo spostamento della prenotazione');
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Nuova Prenotazione';
+            document.getElementById('bookingForm').reset();
+            document.getElementById('bookingId').value = '';
+            document.getElementById('deleteBtn').style.display = 'none';
+            document.getElementById('splitBtn').style.display = 'none';
+            document.getElementById('bookingModal').classList.add('active');
+        }
+        
+        function openEditModal(booking) {
+            document.getElementById('modalTitle').textContent = 'Modifica Prenotazione';
+            document.getElementById('bookingId').value = booking.id;
+            document.getElementById('guestName').value = booking.guest_name;
+            document.getElementById('umbrella').value = booking.umbrella;
+            document.getElementById('checkIn').value = booking.check_in;
+            document.getElementById('checkOut').value = booking.check_out;
+            document.getElementById('carPlate').value = booking.car_plate || '';
+            document.getElementById('notes').value = booking.notes || '';
+            document.getElementById('locked').checked = booking.locked || false;
+            document.getElementById('deleteBtn').style.display = 'block';
+            document.getElementById('splitBtn').style.display = 'block';
+            document.getElementById('bookingModal').classList.add('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('bookingModal').classList.remove('active');
+        }
+        
+        async function saveBooking() {
+            const id = document.getElementById('bookingId').value;
+            const umbrella = parseInt(document.getElementById('umbrella').value);
+            const formula = getFormula(umbrella);
+            
+            const bookingData = {
+                guest_name: document.getElementById('guestName').value,
+                umbrella: umbrella,
+                check_in: document.getElementById('checkIn').value,
+                check_out: document.getElementById('checkOut').value,
+                car_plate: document.getElementById('carPlate').value,
+                notes: document.getElementById('notes').value,
+                locked: document.getElementById('locked').checked,
+                formula: formula
+            };
+            
+            try {
+                showLoading();
+                
+                if (id) {
+                    // Aggiorna esistente
+                    const { error } = await supabase
+                        .from('beach_bookings')
+                        .update(bookingData)
+                        .eq('id', id);
+                    
+                    if (error) throw error;
+                } else {
+                    // Crea nuovo
+                    const { error } = await supabase
+                        .from('beach_bookings')
+                        .insert([bookingData]);
+                    
+                    if (error) throw error;
+                }
+                
+                await loadBookings();
+                renderCalendar();
+                closeModal();
+            } catch (error) {
+                console.error('Errore salvataggio:', error);
+                alert('Errore durante il salvataggio della prenotazione');
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        async function deleteBooking() {
+            if (!confirm('Sei sicuro di voler eliminare questa prenotazione?')) return;
+            
+            const id = document.getElementById('bookingId').value;
+            
+            try {
+                showLoading();
+                
+                const { error } = await supabase
+                    .from('beach_bookings')
+                    .delete()
+                    .eq('id', id);
+                
+                if (error) throw error;
+                
+                await loadBookings();
+                renderCalendar();
+                closeModal();
+            } catch (error) {
+                console.error('Errore eliminazione:', error);
+                alert('Errore durante l\'eliminazione della prenotazione');
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        async function splitBooking() {
+            const id = document.getElementById('bookingId').value;
+            const booking = bookings.find(b => b.id === parseInt(id));
+            
+            if (!booking) return;
+            
+            const splitDate = prompt('Inserisci la data di divisione (YYYY-MM-DD):');
+            if (!splitDate) return;
+            
+            const split = new Date(splitDate);
+            const checkIn = new Date(booking.check_in);
+            const checkOut = new Date(booking.check_out);
+            
+            if (split <= checkIn || split >= checkOut) {
+                alert('La data di divisione deve essere tra il check-in e il check-out');
+                return;
+            }
+            
+            try {
+                showLoading();
+                
+                // Aggiorna la prenotazione originale (prima parte)
+                const { error: updateError } = await supabase
+                    .from('beach_bookings')
+                    .update({ check_out: formatDate(split) })
+                    .eq('id', id);
+                
+                if (updateError) throw updateError;
+                
+                // Crea la seconda prenotazione
+                const { error: insertError } = await supabase
+                    .from('beach_bookings')
+                    .insert([{
+                        guest_name: booking.guest_name,
+                        umbrella: booking.umbrella,
+                        check_in: formatDate(split),
+                        check_out: booking.check_out,
+                        car_plate: booking.car_plate,
+                        notes: booking.notes + ' (Divisa)',
+                        locked: booking.locked,
+                        formula: booking.formula
+                    }]);
+                
+                if (insertError) throw insertError;
+                
+                await loadBookings();
+                renderCalendar();
+                closeModal();
+                alert('Prenotazione divisa con successo!');
+            } catch (error) {
+                console.error('Errore divisione:', error);
+                alert('Errore durante la divisione della prenotazione');
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        async function refreshData() {
+            await loadBookings();
+            renderCalendar();
+        }
+        
+        function showLoading() {
+            document.getElementById('loading').classList.add('active');
+        }
+        
+        function hideLoading() {
+            document.getElementById('loading').classList.remove('active');
+        }
+        
+        function formatDate(date) {
+            return date.toISOString().split('T')[0];
+        }
+        
+        function formatDateIT(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('it-IT', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric' 
+            });
+        }
+        
+        function capitalizeFormula(formula) {
+            return formula.charAt(0).toUpperCase() + formula.slice(1);
+        }
+    </script>
+</body>
+</html>
