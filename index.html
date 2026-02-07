@@ -55,12 +55,12 @@
         .header {
             background: linear-gradient(135deg, var(--ocean-dark) 0%, var(--ocean) 100%);
             color: var(--white);
-            padding: 30px 40px;
+            padding: 15px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 15px;
             position: relative;
             overflow: hidden;
         }
@@ -78,17 +78,17 @@
         
         .header h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 32px;
+            font-size: 22px;
             font-weight: 700;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             position: relative;
             z-index: 1;
         }
         
         .header-subtitle {
-            font-size: 14px;
+            font-size: 11px;
             opacity: 0.9;
-            margin-top: 5px;
+            margin-top: 3px;
         }
         
         .sync-indicator {
@@ -119,10 +119,10 @@
         
         .controls {
             background: var(--gray-100);
-            padding: 25px 40px;
-            border-bottom: 3px solid var(--ocean);
+            padding: 12px 25px;
+            border-bottom: 2px solid var(--ocean);
             display: flex;
-            gap: 20px;
+            gap: 12px;
             flex-wrap: wrap;
             align-items: flex-end;
         }
@@ -130,11 +130,11 @@
         .control-group {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 5px;
         }
         
         .control-group label {
-            font-size: 12px;
+            font-size: 10px;
             font-weight: 600;
             color: var(--gray-600);
             text-transform: uppercase;
@@ -143,10 +143,10 @@
         
         .control-group select,
         .control-group input {
-            padding: 10px 15px;
+            padding: 8px 12px;
             border: 2px solid var(--gray-300);
-            border-radius: 8px;
-            font-size: 14px;
+            border-radius: 6px;
+            font-size: 13px;
             font-family: 'Montserrat', sans-serif;
             background: var(--white);
             transition: all 0.3s ease;
@@ -160,17 +160,17 @@
         }
         
         .btn {
-            padding: 10px 24px;
+            padding: 8px 18px;
             border: none;
-            border-radius: 8px;
-            font-size: 14px;
+            border-radius: 6px;
+            font-size: 13px;
             font-weight: 600;
             font-family: 'Montserrat', sans-serif;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         
         .btn-primary {
@@ -180,8 +180,8 @@
         
         .btn-primary:hover {
             background: var(--ocean-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 119, 190, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 119, 190, 0.3);
         }
         
         .btn-secondary {
@@ -196,10 +196,10 @@
         
         .legend {
             background: var(--gray-100);
-            padding: 20px 40px;
+            padding: 10px 25px;
             border-top: 2px solid var(--gray-200);
             display: flex;
-            gap: 30px;
+            gap: 15px;
             flex-wrap: wrap;
             align-items: center;
         }
@@ -207,21 +207,21 @@
         .legend-title {
             font-weight: 600;
             color: var(--gray-800);
-            font-size: 14px;
+            font-size: 11px;
         }
         
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 13px;
+            gap: 8px;
+            font-size: 11px;
             color: var(--gray-600);
         }
         
         .legend-color {
-            width: 40px;
-            height: 24px;
-            border-radius: 6px;
+            width: 35px;
+            height: 20px;
+            border-radius: 4px;
             border: 2px solid var(--gray-300);
         }
         
@@ -256,30 +256,31 @@
         }
         
         .calendar-wrapper {
-            padding: 30px 40px;
+            padding: 15px 20px;
             overflow-x: auto;
         }
         
         .calendar {
             display: grid;
-            grid-template-columns: 120px repeat(auto-fill, minmax(45px, 1fr));
+            /* grid-template-columns impostato dinamicamente via JS */
             gap: 0;
-            min-width: 1200px;
             border: 2px solid var(--gray-300);
-            border-radius: 12px;
+            border-radius: 8px;
             overflow: hidden;
+            font-size: 10px;
         }
         
         .row-header {
             background: var(--ocean);
             color: var(--white);
-            padding: 12px;
+            padding: 8px 6px;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 11px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-right: 2px solid var(--white);
+            border-right: 2px solid var(--gray-300);
+            border-bottom: 1px solid var(--gray-300);
             position: sticky;
             left: 0;
             z-index: 10;
@@ -299,8 +300,8 @@
         
         .day-header {
             background: var(--gray-200);
-            padding: 10px 5px;
-            font-size: 11px;
+            padding: 6px 3px;
+            font-size: 9px;
             font-weight: 600;
             text-align: center;
             border-right: 1px solid var(--gray-300);
@@ -310,19 +311,19 @@
         
         .day-header .day-num {
             display: block;
-            font-size: 16px;
+            font-size: 14px;
             margin-bottom: 2px;
         }
         
         .day-header .day-name {
             display: block;
-            font-size: 9px;
+            font-size: 7px;
             text-transform: uppercase;
             opacity: 0.7;
         }
         
         .cell {
-            min-height: 60px;
+            min-height: 40px;
             border-right: 1px solid var(--gray-300);
             border-bottom: 1px solid var(--gray-300);
             background: var(--white);
@@ -337,13 +338,8 @@
         
         .cell.occupied {
             cursor: move;
-            padding: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: 600;
-            color: rgba(0, 0, 0, 0.7);
+            padding: 0;
+            display: block;
             position: relative;
             overflow: hidden;
         }
@@ -841,8 +837,21 @@
     <script>
         // CONFIGURAZIONE SUPABASE
         const SUPABASE_URL = 'https://nsettzmyswlfrnzwvpsq.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_6fITZlGmtimiHA-QSznXsA_YIV0DApr';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5zZXR0em15c3dsZnJuend2cHNxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwMzA0NzIsImV4cCI6MjA4MTYwNjQ3Mn0.OA2B7-6PVOi8XSaM5_r0Dxv_wpbG5I_ImTxaR0sgUoY';
+        
+        // Verifica che Supabase sia caricato
+        if (!window.supabase) {
+            alert('Errore: Libreria Supabase non caricata. Ricarica la pagina.');
+            throw new Error('Supabase library not loaded');
+        }
+        
+        let supabaseClient;
+        try {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        } catch (error) {
+            alert('Errore configurazione Supabase: ' + error.message);
+            throw error;
+        }
         
         let bookings = [];
         let currentMonth = 5; // Giugno (0-indexed)
@@ -881,7 +890,7 @@
         async function loadBookings() {
             showLoading();
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('beach_bookings')
                     .select('*')
                     .order('umbrella', { ascending: true })
@@ -898,7 +907,7 @@
         }
         
         function setupRealtimeSubscription() {
-            supabase
+            supabaseClient
                 .channel('beach_bookings_changes')
                 .on('postgres_changes', 
                     { event: '*', schema: 'public', table: 'beach_bookings' },
@@ -915,6 +924,9 @@
             calendar.innerHTML = '';
             
             const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            
+            // Aggiorna il numero di colonne in base ai giorni del mese
+            calendar.style.gridTemplateColumns = `90px repeat(${daysInMonth}, minmax(35px, 1fr))`;
             
             // Header con i giorni
             calendar.appendChild(createEmptyCell());
@@ -1136,7 +1148,7 @@
             try {
                 showLoading();
                 
-                const { error } = await supabase
+                const { error } = await supabaseClient
                     .from('beach_bookings')
                     .update({
                         umbrella: newUmbrella,
@@ -1207,7 +1219,7 @@
                 
                 if (id) {
                     // Aggiorna esistente
-                    const { error } = await supabase
+                    const { error } = await supabaseClient
                         .from('beach_bookings')
                         .update(bookingData)
                         .eq('id', id);
@@ -1215,7 +1227,7 @@
                     if (error) throw error;
                 } else {
                     // Crea nuovo
-                    const { error } = await supabase
+                    const { error } = await supabaseClient
                         .from('beach_bookings')
                         .insert([bookingData]);
                     
@@ -1241,7 +1253,7 @@
             try {
                 showLoading();
                 
-                const { error } = await supabase
+                const { error } = await supabaseClient
                     .from('beach_bookings')
                     .delete()
                     .eq('id', id);
@@ -1281,7 +1293,7 @@
                 showLoading();
                 
                 // Aggiorna la prenotazione originale (prima parte)
-                const { error: updateError } = await supabase
+                const { error: updateError } = await supabaseClient
                     .from('beach_bookings')
                     .update({ check_out: formatDate(split) })
                     .eq('id', id);
@@ -1289,7 +1301,7 @@
                 if (updateError) throw updateError;
                 
                 // Crea la seconda prenotazione
-                const { error: insertError } = await supabase
+                const { error: insertError } = await supabaseClient
                     .from('beach_bookings')
                     .insert([{
                         guest_name: booking.guest_name,
