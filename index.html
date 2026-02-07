@@ -426,6 +426,7 @@
             position: relative;
             cursor: pointer;
             transition: background 0.2s ease;
+            overflow: visible;
         }
         
         .cell:hover {
@@ -434,25 +435,34 @@
         
         .cell.occupied {
             cursor: move;
-            padding: 2px;
+            padding: 0;
+            display: block;
+            position: relative;
+            overflow: visible;
+            z-index: 2;
+        }
+        
+        .cell.occupied.first-day {
+            z-index: 3;
+        }
+        
+        .cell.occupied.first-day .guest-name-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-            overflow: hidden;
-            font-size: 9px;
-            font-weight: 600;
+            font-size: 10px;
+            font-weight: 700;
             color: var(--gray-800);
             text-align: center;
-            line-height: 1.1;
-        }
-        
-        .cell.occupied .guest-name {
-            display: block;
-            width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
             white-space: nowrap;
+            z-index: 5;
+            pointer-events: none;
+            padding: 0 4px;
+            text-shadow: 0 0 3px rgba(255,255,255,0.8);
         }
         
         .cell.occupied.emozione {
@@ -531,10 +541,14 @@
         
         .cell.first-day {
             border-left: 3px solid var(--gray-800);
+            border-top: 3px solid var(--gray-800);
+            border-bottom: 3px solid var(--gray-800);
         }
         
         .cell.last-day {
             border-right: 3px solid var(--gray-800);
+            border-top: 3px solid var(--gray-800);
+            border-bottom: 3px solid var(--gray-800);
         }
         
         .cell.middle-day {
@@ -1246,22 +1260,34 @@
                     cell.classList.add('locked');
                 }
                 
-                // Mostra il nome dell'ospite nella cella
-                const guestName = document.createElement('span');
-                guestName.className = 'guest-name';
-                guestName.textContent = booking.guest_name;
-                guestName.title = booking.guest_name; // Tooltip per nome completo
-                cell.appendChild(guestName);
-                
                 // Aggiungi bordi per prenotazioni continue
                 const checkIn = new Date(booking.check_in);
                 const checkOut = new Date(booking.check_out);
                 const dayBefore = new Date(checkOut);
                 dayBefore.setDate(dayBefore.getDate() - 1);
                 
-                if (date.getTime() === checkIn.getTime()) {
+                const isFirstDay = date.getTime() === checkIn.getTime();
+                const isLastDay = date.getTime() === dayBefore.getTime();
+                
+                if (isFirstDay) {
                     cell.classList.add('first-day');
-                } else if (date.getTime() === dayBefore.getTime()) {
+                    
+                    // Calcola la durata della prenotazione in giorni
+                    const duration = Math.ceil((dayBefore - checkIn) / (1000 * 60 * 60 * 24)) + 1;
+                    
+                    // Crea overlay con nome ospite che si estende su tutte le celle
+                    const guestNameOverlay = document.createElement('div');
+                    guestNameOverlay.className = 'guest-name-overlay';
+                    guestNameOverlay.textContent = booking.guest_name;
+                    guestNameOverlay.title = booking.guest_name;
+                    
+                    // Calcola la larghezza: numero di celle * larghezza cella + bordi
+                    // Assumiamo che ogni cella sia ~35px (minimo) + margini
+                    const overlayWidth = `calc(${duration} * 100% + ${duration - 1}px)`;
+                    guestNameOverlay.style.width = overlayWidth;
+                    
+                    cell.appendChild(guestNameOverlay);
+                } else if (isLastDay) {
                     cell.classList.add('last-day');
                 } else {
                     cell.classList.add('middle-day');
