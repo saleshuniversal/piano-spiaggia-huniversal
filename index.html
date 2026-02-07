@@ -435,34 +435,22 @@
         
         .cell.occupied {
             cursor: move;
-            padding: 0;
-            display: block;
+            padding: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             position: relative;
-            overflow: visible;
+            overflow: hidden;
             z-index: 2;
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--gray-800);
+            text-align: center;
+            line-height: 1.1;
         }
         
         .cell.occupied.first-day {
             z-index: 3;
-        }
-        
-        .cell.occupied.first-day .guest-name-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--gray-800);
-            text-align: center;
-            white-space: nowrap;
-            z-index: 5;
-            pointer-events: none;
-            padding: 0 4px;
-            text-shadow: 0 0 3px rgba(255,255,255,0.8);
         }
         
         .cell.occupied.emozione {
@@ -1260,9 +1248,12 @@
                     cell.classList.add('locked');
                 }
                 
+                // Mostra il nome in ogni cella
+                cell.textContent = booking.guest_name;
+                
                 // Aggiungi bordi per prenotazioni continue
-                const checkIn = new Date(booking.check_in);
-                const checkOut = new Date(booking.check_out);
+                const checkIn = new Date(booking.check_in + 'T00:00:00');
+                const checkOut = new Date(booking.check_out + 'T00:00:00');
                 const dayBefore = new Date(checkOut);
                 dayBefore.setDate(dayBefore.getDate() - 1);
                 
@@ -1271,26 +1262,6 @@
                 
                 if (isFirstDay) {
                     cell.classList.add('first-day');
-                    
-                    // Calcola la durata della prenotazione in giorni
-                    const duration = Math.ceil((dayBefore - checkIn) / (1000 * 60 * 60 * 24)) + 1;
-                    
-                    // Crea overlay con nome ospite che si estende su tutte le celle
-                    const guestNameOverlay = document.createElement('div');
-                    guestNameOverlay.className = 'guest-name-overlay';
-                    guestNameOverlay.textContent = booking.guest_name;
-                    guestNameOverlay.title = booking.guest_name;
-                    
-                    // Calcola la larghezza: prima cella (100%) + celle successive (36px ciascuna)
-                    // 36px = 35px minwidth + 1px bordo
-                    if (duration > 1) {
-                        const overlayWidth = `calc(100% + ${(duration - 1) * 36}px)`;
-                        guestNameOverlay.style.width = overlayWidth;
-                    } else {
-                        guestNameOverlay.style.width = '100%';
-                    }
-                    
-                    cell.appendChild(guestNameOverlay);
                 } else if (isLastDay) {
                     cell.classList.add('last-day');
                 } else {
