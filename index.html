@@ -434,10 +434,25 @@
         
         .cell.occupied {
             cursor: move;
-            padding: 0;
-            display: block;
+            padding: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             position: relative;
             overflow: hidden;
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--gray-800);
+            text-align: center;
+            line-height: 1.1;
+        }
+        
+        .cell.occupied .guest-name {
+            display: block;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         
         .cell.occupied.emozione {
@@ -797,6 +812,10 @@
         </div>
         
         <div class="controls">
+            <button class="btn btn-secondary" onclick="previousMonth()">
+                ⬅️ Mese Prec.
+            </button>
+            
             <div class="control-group">
                 <label>Mese</label>
                 <select id="monthSelect">
@@ -814,6 +833,10 @@
                     <option value="2026">2026</option>
                 </select>
             </div>
+            
+            <button class="btn btn-secondary" onclick="nextMonth()">
+                Mese Succ. ➡️
+            </button>
             
             <button class="btn btn-primary" onclick="openAddModal()">
                 ➕ Nuova Prenotazione
@@ -962,11 +985,6 @@
                 <div class="form-group">
                     <label>Check-out *</label>
                     <input type="date" id="checkOut" required>
-                </div>
-                
-                <div class="form-group">
-                    <label>Targa Auto</label>
-                    <input type="text" id="carPlate">
                 </div>
                 
                 <div class="form-group">
@@ -1228,6 +1246,13 @@
                     cell.classList.add('locked');
                 }
                 
+                // Mostra il nome dell'ospite nella cella
+                const guestName = document.createElement('span');
+                guestName.className = 'guest-name';
+                guestName.textContent = booking.guest_name;
+                guestName.title = booking.guest_name; // Tooltip per nome completo
+                cell.appendChild(guestName);
+                
                 // Aggiungi bordi per prenotazioni continue
                 const checkIn = new Date(booking.check_in);
                 const checkOut = new Date(booking.check_out);
@@ -1308,12 +1333,6 @@
                     <span class="tooltip-label">Check-out:</span>
                     <span class="tooltip-value">${formatDateIT(booking.check_out)}</span>
                 </div>
-                ${booking.car_plate ? `
-                <div class="tooltip-row">
-                    <span class="tooltip-label">Targa:</span>
-                    <span class="tooltip-value">${booking.car_plate}</span>
-                </div>
-                ` : ''}
                 ${booking.notes ? `
                 <div class="tooltip-row">
                     <span class="tooltip-label">Note:</span>
@@ -1425,7 +1444,6 @@
             document.getElementById('umbrella').value = booking.umbrella;
             document.getElementById('checkIn').value = booking.check_in;
             document.getElementById('checkOut').value = booking.check_out;
-            document.getElementById('carPlate').value = booking.car_plate || '';
             document.getElementById('notes').value = booking.notes || '';
             document.getElementById('locked').checked = booking.locked || false;
             document.getElementById('deleteBtn').style.display = 'block';
@@ -1450,7 +1468,6 @@
                 umbrella: umbrella,
                 check_in: document.getElementById('checkIn').value,
                 check_out: document.getElementById('checkOut').value,
-                car_plate: document.getElementById('carPlate').value,
                 notes: document.getElementById('notes').value,
                 locked: document.getElementById('locked').checked,
                 formula: formula
@@ -1550,8 +1567,7 @@
                         umbrella: booking.umbrella,
                         check_in: formatDate(split),
                         check_out: booking.check_out,
-                        car_plate: booking.car_plate,
-                        notes: booking.notes + ' (Divisa)',
+                        notes: booking.notes ? booking.notes + ' (Divisa)' : '(Divisa)',
                         locked: booking.locked,
                         formula: booking.formula
                     }]);
@@ -1572,6 +1588,34 @@
         
         async function refreshData() {
             await loadBookings();
+            renderCalendar();
+        }
+        
+        function previousMonth() {
+            if (currentMonth === 4) {
+                // Da Maggio torna a Settembre dell'anno precedente
+                currentMonth = 8;
+                currentYear--;
+            } else {
+                currentMonth--;
+            }
+            
+            document.getElementById('monthSelect').value = currentMonth;
+            document.getElementById('yearSelect').value = currentYear;
+            renderCalendar();
+        }
+        
+        function nextMonth() {
+            if (currentMonth === 8) {
+                // Da Settembre va a Maggio dell'anno successivo
+                currentMonth = 4;
+                currentYear++;
+            } else {
+                currentMonth++;
+            }
+            
+            document.getElementById('monthSelect').value = currentMonth;
+            document.getElementById('yearSelect').value = currentYear;
             renderCalendar();
         }
         
