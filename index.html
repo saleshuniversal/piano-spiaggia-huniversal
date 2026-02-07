@@ -270,9 +270,87 @@
             font-size: 10px;
         }
         
-        .row-header {
+        .fila-header {
             background: var(--ocean);
             color: var(--white);
+            padding: 20px 8px;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 2px solid var(--gray-300);
+            border-bottom: 1px solid var(--gray-300);
+            position: sticky;
+            left: 0;
+            z-index: 10;
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            letter-spacing: 3px;
+        }
+        
+        .fila-header.emozione {
+            background: linear-gradient(180deg, var(--gold-dark) 0%, var(--gold) 100%);
+        }
+        
+        .fila-header.abbraccio {
+            background: linear-gradient(180deg, var(--silver-dark) 0%, var(--silver) 100%);
+        }
+        
+        .fila-header.carezza {
+            background: linear-gradient(180deg, var(--bronze-dark) 0%, var(--bronze) 100%);
+        }
+        
+        .formula-header {
+            color: var(--gray-800);
+            padding: 8px;
+            font-weight: 700;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 2px solid var(--gray-300);
+            border-bottom: 1px solid var(--gray-300);
+            position: sticky;
+            left: 50px;
+            z-index: 9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .formula-header.emozione {
+            background: repeating-linear-gradient(
+                45deg,
+                var(--gold-light),
+                var(--gold-light) 5px,
+                var(--gold) 5px,
+                var(--gold) 10px
+            );
+        }
+        
+        .formula-header.abbraccio {
+            background: repeating-linear-gradient(
+                45deg,
+                var(--silver-light),
+                var(--silver-light) 5px,
+                var(--silver) 5px,
+                var(--silver) 10px
+            );
+        }
+        
+        .formula-header.carezza {
+            background: repeating-linear-gradient(
+                45deg,
+                var(--bronze-light),
+                var(--bronze-light) 5px,
+                var(--bronze) 5px,
+                var(--bronze) 10px
+            );
+        }
+        
+        .row-header {
+            background: var(--gray-200);
+            color: var(--gray-800);
             padding: 8px 6px;
             font-weight: 600;
             font-size: 11px;
@@ -282,20 +360,38 @@
             border-right: 2px solid var(--gray-300);
             border-bottom: 1px solid var(--gray-300);
             position: sticky;
-            left: 0;
-            z-index: 10;
+            left: 180px;
+            z-index: 8;
         }
         
-        .row-header.emozione {
-            background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
+        .passerella-row {
+            background: #FFD700;
+            color: var(--gray-800);
+            padding: 8px;
+            font-weight: 700;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid var(--gray-300);
+            border-bottom: 2px solid var(--gray-800);
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
         
-        .row-header.abbraccio {
-            background: linear-gradient(135deg, var(--silver-dark) 0%, var(--silver) 100%);
-        }
-        
-        .row-header.carezza {
-            background: linear-gradient(135deg, var(--bronze-dark) 0%, var(--bronze) 100%);
+        .passerella-full {
+            background: #FFD700;
+            color: var(--gray-800);
+            padding: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 2px solid var(--gray-800);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            grid-column: span 100;
         }
         
         .day-header {
@@ -704,6 +800,7 @@
             <div class="control-group">
                 <label>Mese</label>
                 <select id="monthSelect">
+                    <option value="4">Maggio</option>
                     <option value="5">Giugno</option>
                     <option value="6">Luglio</option>
                     <option value="7">Agosto</option>
@@ -768,27 +865,91 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Ombrellone (Fila) *</label>
+                    <label>Ombrellone *</label>
                     <select id="umbrella" required>
-                        <optgroup label="Emozione (Fila 1-3)">
-                            <option value="1">Fila 1</option>
-                            <option value="2">Fila 2</option>
-                            <option value="3">Fila 3</option>
+                        <optgroup label="Fila 1 - Emozione">
+                            <option value="1">Ombrellone 1</option>
+                            <option value="2">Ombrellone 2</option>
+                            <option value="3">Ombrellone 3</option>
+                            <option value="4">Ombrellone 4</option>
                         </optgroup>
-                        <optgroup label="Abbraccio (Fila 4-10)">
-                            <option value="4">Fila 4</option>
-                            <option value="5">Fila 5</option>
-                            <option value="6">Fila 6</option>
-                            <option value="7">Fila 7</option>
-                            <option value="8">Fila 8</option>
-                            <option value="9">Fila 9</option>
-                            <option value="10">Fila 10</option>
+                        <optgroup label="Fila 2 - Emozione">
+                            <option value="5">Ombrellone 5</option>
+                            <option value="6">Ombrellone 6</option>
+                            <option value="7">Ombrellone 7</option>
+                            <option value="8">Ombrellone 8</option>
                         </optgroup>
-                        <optgroup label="Carezza (Fila 11-14)">
-                            <option value="11">Fila 11</option>
-                            <option value="12">Fila 12</option>
-                            <option value="13">Fila 13</option>
-                            <option value="14">Fila 14</option>
+                        <optgroup label="Fila 3 - Emozione">
+                            <option value="9">Ombrellone 9</option>
+                            <option value="10">Ombrellone 10</option>
+                            <option value="11">Ombrellone 11</option>
+                            <option value="12">Ombrellone 12</option>
+                        </optgroup>
+                        <optgroup label="Fila 4 - Abbraccio">
+                            <option value="13">Ombrellone 13</option>
+                            <option value="14">Ombrellone 14</option>
+                            <option value="15">Ombrellone 15</option>
+                            <option value="16">Ombrellone 16</option>
+                        </optgroup>
+                        <optgroup label="Fila 5 - Abbraccio">
+                            <option value="17">Ombrellone 17</option>
+                            <option value="18">Ombrellone 18</option>
+                            <option value="19">Ombrellone 19</option>
+                            <option value="20">Ombrellone 20</option>
+                        </optgroup>
+                        <optgroup label="Fila 6 - Abbraccio">
+                            <option value="21">Ombrellone 21</option>
+                            <option value="22">Ombrellone 22</option>
+                            <option value="23">Ombrellone 23</option>
+                            <option value="24">Ombrellone 24</option>
+                        </optgroup>
+                        <optgroup label="Fila 7 - Abbraccio">
+                            <option value="25">Ombrellone 25</option>
+                            <option value="26">Ombrellone 26</option>
+                            <option value="27">Ombrellone 27</option>
+                            <option value="28">Ombrellone 28</option>
+                        </optgroup>
+                        <optgroup label="Fila 8 - Abbraccio">
+                            <option value="29">Ombrellone 29</option>
+                            <option value="30">Ombrellone 30</option>
+                            <option value="31">Ombrellone 31</option>
+                            <option value="32">Ombrellone 32</option>
+                        </optgroup>
+                        <optgroup label="Fila 9 - Abbraccio">
+                            <option value="33">Ombrellone 33</option>
+                            <option value="34">Ombrellone 34</option>
+                            <option value="35">Ombrellone 35</option>
+                            <option value="36">Ombrellone 36</option>
+                        </optgroup>
+                        <optgroup label="Fila 10 - Abbraccio">
+                            <option value="37">Ombrellone 37</option>
+                            <option value="38">Ombrellone 38</option>
+                            <option value="39">Ombrellone 39</option>
+                            <option value="40">Ombrellone 40</option>
+                        </optgroup>
+                        <optgroup label="Fila 11 - Carezza">
+                            <option value="41">Ombrellone 41</option>
+                            <option value="42">Ombrellone 42</option>
+                            <option value="43">Ombrellone 43</option>
+                            <option value="44">Ombrellone 44</option>
+                        </optgroup>
+                        <optgroup label="Fila 12 - Carezza">
+                            <option value="45">Ombrellone 45</option>
+                            <option value="46">Ombrellone 46</option>
+                            <option value="47">Ombrellone 47</option>
+                            <option value="48">Ombrellone 48</option>
+                        </optgroup>
+                        <optgroup label="Fila 13 - Carezza">
+                            <option value="49">Ombrellone 49</option>
+                            <option value="50">Ombrellone 50</option>
+                            <option value="51">Ombrellone 51</option>
+                            <option value="52">Ombrellone 52</option>
+                        </optgroup>
+                        <optgroup label="Fila 14 - Carezza">
+                            <option value="53">Ombrellone 53</option>
+                            <option value="54">Ombrellone 54</option>
+                            <option value="55">Ombrellone 55</option>
+                            <option value="56">Ombrellone 56</option>
                         </optgroup>
                     </select>
                 </div>
@@ -925,30 +1086,115 @@
             
             const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
             
-            // Aggiorna il numero di colonne in base ai giorni del mese
-            calendar.style.gridTemplateColumns = `90px repeat(${daysInMonth}, minmax(35px, 1fr))`;
+            // Aggiorna il numero di colonne: FILA + FORMULA + OMBR. + giorni
+            calendar.style.gridTemplateColumns = `50px 130px 50px repeat(${daysInMonth}, minmax(35px, 1fr))`;
             
-            // Header con i giorni
-            calendar.appendChild(createEmptyCell());
+            // === HEADER ROW ===
+            // Colonna "FILA"
+            const filaLabel = document.createElement('div');
+            filaLabel.className = 'day-header';
+            filaLabel.style.fontWeight = '700';
+            filaLabel.style.fontSize = '10px';
+            filaLabel.textContent = 'FILA';
+            calendar.appendChild(filaLabel);
+            
+            // Colonna "FORMULA"
+            const formulaLabel = document.createElement('div');
+            formulaLabel.className = 'day-header';
+            formulaLabel.style.fontWeight = '700';
+            formulaLabel.style.fontSize = '10px';
+            formulaLabel.textContent = 'FORMULA';
+            calendar.appendChild(formulaLabel);
+            
+            // Colonna "OMBR."
+            const ombrLabel = document.createElement('div');
+            ombrLabel.className = 'day-header';
+            ombrLabel.style.fontWeight = '700';
+            ombrLabel.style.fontSize = '10px';
+            ombrLabel.textContent = 'OMBR.';
+            calendar.appendChild(ombrLabel);
+            
+            // Giorni del mese
             for (let day = 1; day <= daysInMonth; day++) {
                 calendar.appendChild(createDayHeader(day));
             }
             
-            // Righe per ogni fila di ombrelloni
-            for (let umbrella = 1; umbrella <= 14; umbrella++) {
-                calendar.appendChild(createRowHeader(umbrella));
+            // === PASSERELLA ROW ===
+            // Colonna FILA vuota
+            const passFila = document.createElement('div');
+            passFila.className = 'passerella-row';
+            calendar.appendChild(passFila);
+            
+            // Colonna FORMULA vuota
+            const passFormula = document.createElement('div');
+            passFormula.className = 'passerella-row';
+            calendar.appendChild(passFormula);
+            
+            // Colonna OMBR vuota
+            const passOmbr = document.createElement('div');
+            passOmbr.className = 'passerella-row';
+            calendar.appendChild(passOmbr);
+            
+            // PASSERELLA che occupa tutte le celle dei giorni
+            const passerellaFull = document.createElement('div');
+            passerellaFull.className = 'passerella-full';
+            passerellaFull.textContent = 'PASSERELLA';
+            passerellaFull.style.gridColumn = `span ${daysInMonth}`;
+            calendar.appendChild(passerellaFull);
+            
+            // === RIGHE OMBRELLONI (56 totali) ===
+            let umbrellaNum = 1;
+            
+            const formulas = [
+                { name: 'EMOZIONE', fileStart: 1, fileEnd: 3, class: 'emozione' },
+                { name: 'ABBRACCIO', fileStart: 4, fileEnd: 10, class: 'abbraccio' },
+                { name: 'CAREZZA', fileStart: 11, fileEnd: 14, class: 'carezza' }
+            ];
+            
+            formulas.forEach(formulaGroup => {
+                let firstOfFormula = true;
                 
-                for (let day = 1; day <= daysInMonth; day++) {
-                    calendar.appendChild(createCell(umbrella, day));
+                for (let fila = formulaGroup.fileStart; fila <= formulaGroup.fileEnd; fila++) {
+                    let firstOfFila = true;
+                    
+                    // 4 ombrelloni per fila
+                    for (let i = 0; i < 4; i++) {
+                        // Colonna FILA (solo per il primo ombrellone della fila)
+                        if (firstOfFila) {
+                            const filaHeader = document.createElement('div');
+                            filaHeader.className = `fila-header ${formulaGroup.class}`;
+                            filaHeader.textContent = `${fila}`;
+                            filaHeader.style.gridRow = `span 4`; // Span 4 righe (4 ombrelloni)
+                            calendar.appendChild(filaHeader);
+                            firstOfFila = false;
+                        }
+                        
+                        // Colonna FORMULA (solo per il primo ombrellone della formula)
+                        if (firstOfFormula) {
+                            const formulaHeader = document.createElement('div');
+                            formulaHeader.className = `formula-header ${formulaGroup.class}`;
+                            formulaHeader.textContent = formulaGroup.name;
+                            const rowSpan = (formulaGroup.fileEnd - formulaGroup.fileStart + 1) * 4;
+                            formulaHeader.style.gridRow = `span ${rowSpan}`;
+                            calendar.appendChild(formulaHeader);
+                            firstOfFormula = false;
+                        }
+                        
+                        // Colonna OMBRELLONE
+                        const umbrellaHeader = document.createElement('div');
+                        umbrellaHeader.className = 'row-header';
+                        umbrellaHeader.textContent = umbrellaNum;
+                        calendar.appendChild(umbrellaHeader);
+                        
+                        // Celle giorni per questo ombrellone
+                        for (let day = 1; day <= daysInMonth; day++) {
+                            calendar.appendChild(createCell(umbrellaNum, day, formulaGroup.class));
+                        }
+                        
+                        umbrellaNum++;
+                    }
                 }
-            }
-        }
-        
-        function createEmptyCell() {
-            const cell = document.createElement('div');
-            cell.className = 'row-header';
-            cell.textContent = 'Fila';
-            return cell;
+            });
         }
         
         function createDayHeader(day) {
@@ -964,24 +1210,16 @@
             return header;
         }
         
-        function createRowHeader(umbrella) {
-            const header = document.createElement('div');
-            const formula = getFormula(umbrella);
-            header.className = `row-header ${formula}`;
-            header.textContent = `Fila ${umbrella}`;
-            return header;
-        }
-        
-        function createCell(umbrella, day) {
+        function createCell(umbrellaNum, day, formula) {
             const cell = document.createElement('div');
             cell.className = 'cell';
-            cell.dataset.umbrella = umbrella;
+            cell.dataset.umbrella = umbrellaNum;
             cell.dataset.day = day;
             
             const date = new Date(currentYear, currentMonth, day);
             const dateStr = formatDate(date);
             
-            const booking = findBookingForCell(umbrella, dateStr);
+            const booking = findBookingForCell(umbrellaNum, dateStr);
             
             if (booking) {
                 cell.classList.add('occupied');
@@ -1025,10 +1263,10 @@
             return cell;
         }
         
-        function getFormula(umbrella) {
-            if (umbrella >= 1 && umbrella <= 3) return 'emozione';
-            if (umbrella >= 4 && umbrella <= 10) return 'abbraccio';
-            if (umbrella >= 11 && umbrella <= 14) return 'carezza';
+        function getFormula(fila) {
+            if (fila >= 1 && fila <= 3) return 'emozione';
+            if (fila >= 4 && fila <= 10) return 'abbraccio';
+            if (fila >= 11 && fila <= 14) return 'carezza';
             return '';
         }
         
@@ -1142,8 +1380,9 @@
             const newCheckOut = new Date(newCheckIn);
             newCheckOut.setDate(newCheckOut.getDate() + duration);
             
-            // Aggiorna la formula in base alla nuova fila
-            const newFormula = getFormula(newUmbrella);
+            // Calcola la fila dall'ombrellone e poi la formula
+            const newFila = Math.ceil(newUmbrella / 4);
+            const newFormula = getFormula(newFila);
             
             try {
                 showLoading();
@@ -1201,7 +1440,10 @@
         async function saveBooking() {
             const id = document.getElementById('bookingId').value;
             const umbrella = parseInt(document.getElementById('umbrella').value);
-            const formula = getFormula(umbrella);
+            
+            // Calcola la fila dall'ombrellone (1-4 → Fila 1, 5-8 → Fila 2, etc.)
+            const fila = Math.ceil(umbrella / 4);
+            const formula = getFormula(fila);
             
             const bookingData = {
                 guest_name: document.getElementById('guestName').value,
