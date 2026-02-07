@@ -1281,10 +1281,14 @@
                     guestNameOverlay.textContent = booking.guest_name;
                     guestNameOverlay.title = booking.guest_name;
                     
-                    // Calcola la larghezza: numero di celle * larghezza cella + bordi
-                    // Assumiamo che ogni cella sia ~35px (minimo) + margini
-                    const overlayWidth = `calc(${duration} * 100% + ${duration - 1}px)`;
-                    guestNameOverlay.style.width = overlayWidth;
+                    // Calcola la larghezza: prima cella (100%) + celle successive (36px ciascuna)
+                    // 36px = 35px minwidth + 1px bordo
+                    if (duration > 1) {
+                        const overlayWidth = `calc(100% + ${(duration - 1) * 36}px)`;
+                        guestNameOverlay.style.width = overlayWidth;
+                    } else {
+                        guestNameOverlay.style.width = '100%';
+                    }
                     
                     cell.appendChild(guestNameOverlay);
                 } else if (isLastDay) {
