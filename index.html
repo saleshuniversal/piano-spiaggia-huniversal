@@ -435,22 +435,32 @@
         
         .cell.occupied {
             cursor: move;
-            padding: 2px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 0;
+            display: block;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
             z-index: 2;
-            font-size: 9px;
-            font-weight: 700;
-            color: var(--gray-800);
-            text-align: center;
-            line-height: 1.1;
         }
         
         .cell.occupied.first-day {
-            z-index: 3;
+            z-index: 5;
+        }
+        
+        .booking-label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding-left: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #1a1a1a;
+            white-space: nowrap;
+            z-index: 10;
+            pointer-events: none;
+            background: transparent;
         }
         
         .cell.occupied.emozione {
@@ -1248,9 +1258,6 @@
                     cell.classList.add('locked');
                 }
                 
-                // Mostra il nome in ogni cella
-                cell.textContent = booking.guest_name;
-                
                 // Aggiungi bordi per prenotazioni continue
                 const checkIn = new Date(booking.check_in + 'T00:00:00');
                 const checkOut = new Date(booking.check_out + 'T00:00:00');
@@ -1262,6 +1269,22 @@
                 
                 if (isFirstDay) {
                     cell.classList.add('first-day');
+                    
+                    // Calcola durata in giorni
+                    const durationMs = dayBefore.getTime() - checkIn.getTime();
+                    const durationDays = Math.floor(durationMs / (1000 * 60 * 60 * 24)) + 1;
+                    
+                    // Crea label con nome
+                    const label = document.createElement('div');
+                    label.className = 'booking-label';
+                    label.textContent = booking.guest_name;
+                    
+                    // Larghezza = numero celle × larghezza approssimativa (40px è una stima sicura)
+                    const estimatedWidth = durationDays * 40;
+                    label.style.width = estimatedWidth + 'px';
+                    
+                    cell.appendChild(label);
+                    
                 } else if (isLastDay) {
                     cell.classList.add('last-day');
                 } else {
