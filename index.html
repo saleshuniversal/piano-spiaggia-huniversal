@@ -850,6 +850,11 @@
                 Mese Succ. ➡️
             </button>
             
+            <div class="control-group" style="flex-grow: 1; max-width: 250px;">
+                <label>🔍 Cerca per nome</label>
+                <input type="text" id="searchGuest" placeholder="Nome o cognome..." onkeyup="searchByGuestName()">
+            </div>
+            
             <button class="btn btn-primary" onclick="openAddModal()">
                 ➕ Nuova Prenotazione
             </button>
@@ -1076,6 +1081,10 @@
                 e.preventDefault();
                 await saveBooking();
             });
+            
+            // Aggiorna ombrelloni disponibili quando cambiano le date
+            document.getElementById('checkIn').addEventListener('change', updateAvailableUmbrellas);
+            document.getElementById('checkOut').addEventListener('change', updateAvailableUmbrellas);
         }
         
         async function loadBookings() {
@@ -1459,6 +1468,7 @@
             document.getElementById('bookingId').value = '';
             document.getElementById('deleteBtn').style.display = 'none';
             document.getElementById('splitBtn').style.display = 'none';
+            resetUmbrellaSelect(); // Resetta il select degli ombrelloni
             document.getElementById('bookingModal').classList.add('active');
         }
         
@@ -1473,11 +1483,117 @@
             document.getElementById('locked').checked = booking.locked || false;
             document.getElementById('deleteBtn').style.display = 'block';
             document.getElementById('splitBtn').style.display = 'block';
+            updateAvailableUmbrellas(); // Aggiorna ombrelloni disponibili
             document.getElementById('bookingModal').classList.add('active');
         }
         
         function closeModal() {
             document.getElementById('bookingModal').classList.remove('active');
+        }
+        
+        function updateAvailableUmbrellas() {
+            const checkInStr = document.getElementById('checkIn').value;
+            const checkOutStr = document.getElementById('checkOut').value;
+            const currentBookingId = document.getElementById('bookingId').value;
+            
+            if (!checkInStr || !checkOutStr) {
+                // Se non ci sono entrambe le date, mostra tutti gli ombrelloni
+                resetUmbrellaSelect();
+                return;
+            }
+            
+            const checkIn = new Date(checkInStr + 'T00:00:00');
+            const checkOut = new Date(checkOutStr + 'T00:00:00');
+            
+            if (checkOut <= checkIn) {
+                alert('La data di check-out deve essere successiva al check-in');
+                return;
+            }
+            
+            // Trova ombrelloni occupati nel periodo
+            const occupiedUmbrellas = new Set();
+            
+            bookings.forEach(booking => {
+                // Salta la prenotazione corrente in caso di modifica
+                if (currentBookingId && booking.id === parseInt(currentBookingId)) {
+                    return;
+                }
+                
+                const bookingCheckIn = new Date(booking.check_in + 'T00:00:00');
+                const bookingCheckOut = new Date(booking.check_out + 'T00:00:00');
+                
+                // Controlla se c'è sovrapposizione
+                // Due periodi si sovrappongono se: checkIn < bookingCheckOut AND checkOut > bookingCheckIn
+                if (checkIn < bookingCheckOut && checkOut > bookingCheckIn) {
+                    occupiedUmbrellas.add(booking.umbrella);
+                }
+            });
+            
+            // Aggiorna il select
+            const select = document.getElementById('umbrella');
+            const options = select.querySelectorAll('option');
+            
+            options.forEach(option => {
+                const umbrellaNum = parseInt(option.value);
+                if (umbrellaNum && occupiedUmbrellas.has(umbrellaNum)) {
+                    option.disabled = true;
+                    option.textContent = option.textContent.replace(' (occupato)', '') + ' (occupato)';
+                } else if (umbrellaNum) {
+                    option.disabled = false;
+                    option.textContent = option.textContent.replace(' (occupato)', '');
+                }
+            });
+        }
+        
+        function resetUmbrellaSelect() {
+            const select = document.getElementById('umbrella');
+            const options = select.querySelectorAll('option');
+            
+            options.forEach(option => {
+                option.disabled = false;
+                option.textContent = option.textContent.replace(' (occupato)', '');
+            });
+        }
+        
+        function searchByGuestName() {
+            const searchTerm = document.getElementById('searchGuest').value.toLowerCase().trim();
+            
+            if (!searchTerm) {
+                // Se il campo è vuoto, torna al mese corrente
+                renderCalendar();
+                return;
+            }
+            
+            // Trova tutte le prenotazioni che corrispondono
+            const matchingBookings = bookings.filter(booking => 
+                booking.guest_name.toLowerCase().includes(searchTerm)
+            );
+            
+            if (matchingBookings.length === 0) {
+                alert('Nessuna prenotazione trovata per: ' + searchTerm);
+                return;
+            }
+            
+            // Prendi la prima prenotazione trovata e vai a quel mese
+            const firstMatch = matchingBookings[0];
+            const checkInDate = new Date(firstMatch.check_in);
+            
+            currentMonth = checkInDate.getMonth();
+            currentYear = checkInDate.getFullYear();
+            
+            document.getElementById('monthSelect').value = currentMonth;
+            document.getElementById('yearSelect').value = currentYear;
+            
+            renderCalendar();
+            
+            // Mostra un alert con i risultati
+            const resultText = matchingBookings.map(b => {
+                const checkIn = new Date(b.check_in);
+                const checkOut = new Date(b.check_out);
+                return `${b.guest_name} - Ombrellone ${b.umbrella} - ${formatDateIT(b.check_in)} / ${formatDateIT(b.check_out)}`;
+            }).join('\n');
+            
+            alert(`Trovate ${matchingBookings.length} prenotazioni:\n\n${resultText}`);
         }
         
         async function saveBooking() {
