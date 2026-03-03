@@ -4,24 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Piano Spiaggia 2026 - Hotel Universal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --gold: #D4AF37;
-            --gold-light: #F4E5C2;
-            --gold-dark: #B8941E;
-            --silver: #C0C0C0;
-            --silver-light: #E8E8E8;
-            --silver-dark: #A8A8A8;
-            --bronze: #CD7F32;
-            --bronze-light: #E6BA8F;
-            --bronze-dark: #A86428;
             --ocean: #0077BE;
             --ocean-dark: #005A8C;
-            --sand: #F5DEB3;
+            --ocean-light: #4A90E2;
+            --gold: #D4AF37;
+            --gold-dark: #B8942E;
+            --gold-light: #F4D03F;
+            --silver: #C0C0C0;
+            --silver-dark: #A8A8A8;
+            --silver-light: #E0E0E0;
+            --bronze: #CD7F32;
+            --bronze-dark: #B86F2A;
+            --bronze-light: #E5A368;
             --white: #FFFFFF;
             --gray-100: #F7FAFC;
             --gray-200: #EDF2F7;
@@ -38,18 +36,15 @@
         
         body {
             font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, #E0F2FE 0%, #FEF3C7 50%, #FED7AA 100%);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
-            padding: 20px;
         }
         
         .container {
-            max-width: 1900px;
+            max-width: 100%;
             margin: 0 auto;
             background: var(--white);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
         }
         
         .header {
@@ -59,62 +54,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            border-radius: 50%;
         }
         
         .header h1 {
             font-family: 'Playfair Display', serif;
             font-size: 22px;
             font-weight: 700;
-            letter-spacing: 0.5px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .header-subtitle {
-            font-size: 11px;
-            opacity: 0.9;
-            margin-top: 3px;
-        }
-        
-        .sync-indicator {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(255,255,255,0.15);
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-size: 14px;
-            backdrop-filter: blur(10px);
-            position: relative;
-            z-index: 1;
-        }
-        
-        .sync-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #10B981;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(0.95); }
         }
         
         .controls {
@@ -124,7 +69,7 @@
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
-            align-items: flex-end;
+            align-items: center;
         }
         
         .control-group {
@@ -137,8 +82,6 @@
             font-size: 10px;
             font-weight: 600;
             color: var(--gray-600);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
         
         .control-group select,
@@ -147,16 +90,6 @@
             border: 2px solid var(--gray-300);
             border-radius: 6px;
             font-size: 13px;
-            font-family: 'Montserrat', sans-serif;
-            background: var(--white);
-            transition: all 0.3s ease;
-        }
-        
-        .control-group select:focus,
-        .control-group input:focus {
-            outline: none;
-            border-color: var(--ocean);
-            box-shadow: 0 0 0 3px rgba(0, 119, 190, 0.1);
         }
         
         .btn {
@@ -165,12 +98,8 @@
             border-radius: 6px;
             font-size: 13px;
             font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
             cursor: pointer;
             transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
         
         .btn-primary {
@@ -180,8 +109,6 @@
         
         .btn-primary:hover {
             background: var(--ocean-dark);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 119, 190, 0.3);
         }
         
         .btn-secondary {
@@ -194,406 +121,160 @@
             color: var(--white);
         }
         
-        .legend {
-            background: var(--gray-100);
-            padding: 10px 25px;
-            border-top: 2px solid var(--gray-200);
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        
-        .legend-title {
-            font-weight: 600;
-            color: var(--gray-800);
-            font-size: 11px;
-        }
-        
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 11px;
-            color: var(--gray-600);
-        }
-        
-        .legend-color {
-            width: 35px;
-            height: 20px;
-            border-radius: 4px;
-            border: 2px solid var(--gray-300);
-        }
-        
-        .legend-color.emozione {
-            background: repeating-linear-gradient(
-                45deg,
-                var(--gold-light),
-                var(--gold-light) 10px,
-                var(--gold) 10px,
-                var(--gold) 20px
-            );
-        }
-        
-        .legend-color.abbraccio {
-            background: repeating-linear-gradient(
-                45deg,
-                var(--silver-light),
-                var(--silver-light) 10px,
-                var(--silver) 10px,
-                var(--silver) 20px
-            );
-        }
-        
-        .legend-color.carezza {
-            background: repeating-linear-gradient(
-                45deg,
-                var(--bronze-light),
-                var(--bronze-light) 10px,
-                var(--bronze) 10px,
-                var(--bronze) 20px
-            );
-        }
-        
         .calendar-wrapper {
             padding: 15px 20px;
-            overflow-x: auto;
+            overflow: auto;
+            max-height: 80vh;
         }
         
         .calendar {
             display: grid;
-            /* grid-template-columns impostato dinamicamente via JS */
             gap: 0;
             border: 2px solid var(--gray-300);
-            border-radius: 8px;
-            overflow: hidden;
             font-size: 10px;
         }
         
-        .fila-header {
-            background: var(--ocean);
+        /* Header Mare */
+        .header-mare {
+            background: linear-gradient(180deg, var(--ocean-light) 0%, var(--ocean) 100%);
+            padding: 8px 4px;
+            text-align: center;
             color: var(--white);
-            padding: 20px 8px;
-            font-weight: 700;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-right: 2px solid var(--gray-300);
-            border-bottom: 1px solid var(--gray-300);
-            position: sticky;
-            left: 0;
-            z-index: 10;
-            writing-mode: vertical-rl;
-            text-orientation: upright;
-            letter-spacing: 3px;
-        }
-        
-        .fila-header.emozione {
-            background: linear-gradient(180deg, var(--gold-dark) 0%, var(--gold) 100%);
-        }
-        
-        .fila-header.abbraccio {
-            background: linear-gradient(180deg, var(--silver-dark) 0%, var(--silver) 100%);
-        }
-        
-        .fila-header.carezza {
-            background: linear-gradient(180deg, var(--bronze-dark) 0%, var(--bronze) 100%);
-        }
-        
-        .formula-header {
-            color: var(--gray-800);
-            padding: 8px;
             font-weight: 700;
             font-size: 11px;
+            border-right: 1px solid rgba(255,255,255,0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        /* Colonne laterali */
+        .col-formula {
+            padding: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-right: 2px solid var(--gray-300);
-            border-bottom: 1px solid var(--gray-300);
-            position: sticky;
-            left: 50px;
-            z-index: 9;
+            font-weight: 700;
+            font-size: 10px;
             text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .formula-header.emozione {
-            background: repeating-linear-gradient(
-                45deg,
-                var(--gold-light),
-                var(--gold-light) 5px,
-                var(--gold) 5px,
-                var(--gold) 10px
-            );
-        }
-        
-        .formula-header.abbraccio {
-            background: repeating-linear-gradient(
-                45deg,
-                var(--silver-light),
-                var(--silver-light) 5px,
-                var(--silver) 5px,
-                var(--silver) 10px
-            );
-        }
-        
-        .formula-header.carezza {
-            background: repeating-linear-gradient(
-                45deg,
-                var(--bronze-light),
-                var(--bronze-light) 5px,
-                var(--bronze) 5px,
-                var(--bronze) 10px
-            );
-        }
-        
-        .row-header {
-            background: var(--gray-200);
-            color: var(--gray-800);
-            padding: 8px 6px;
-            font-weight: 600;
-            font-size: 11px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             border-right: 2px solid var(--gray-300);
             border-bottom: 1px solid var(--gray-300);
-            position: sticky;
-            left: 180px;
-            z-index: 8;
         }
         
-        .passerella-row {
-            background: #FFD700;
-            color: var(--gray-800);
+        .col-formula.emozione {
+            background: repeating-linear-gradient(45deg, var(--gold-light), var(--gold-light) 5px, var(--gold) 5px, var(--gold) 10px);
+        }
+        
+        .col-formula.abbraccio {
+            background: repeating-linear-gradient(45deg, var(--silver-light), var(--silver-light) 5px, var(--silver) 5px, var(--silver) 10px);
+        }
+        
+        .col-formula.carezza {
+            background: repeating-linear-gradient(45deg, var(--bronze-light), var(--bronze-light) 5px, var(--bronze) 5px, var(--bronze) 10px);
+        }
+        
+        .col-fila {
             padding: 8px;
-            font-weight: 700;
-            font-size: 11px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-right: 1px solid var(--gray-300);
-            border-bottom: 2px solid var(--gray-800);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        
-        .passerella-full {
-            background: #FFD700;
-            color: var(--gray-800);
-            padding: 8px;
             font-weight: 700;
             font-size: 13px;
+            background: var(--ocean);
+            color: var(--white);
+            border-right: 2px solid var(--gray-300);
+            border-bottom: 1px solid var(--gray-300);
+        }
+        
+        .col-ombr {
+            padding: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-bottom: 2px solid var(--gray-800);
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            grid-column: span 100;
-        }
-        
-        .day-header {
-            background: var(--gray-200);
-            padding: 6px 3px;
-            font-size: 9px;
             font-weight: 600;
-            text-align: center;
-            border-right: 1px solid var(--gray-300);
-            border-bottom: 2px solid var(--gray-300);
+            font-size: 11px;
+            background: var(--gray-200);
             color: var(--gray-800);
+            border-right: 2px solid var(--gray-300);
+            border-bottom: 1px solid var(--gray-300);
         }
         
-        .day-header .day-num {
-            display: block;
-            font-size: 14px;
-            margin-bottom: 2px;
-        }
-        
-        .day-header .day-name {
-            display: block;
-            font-size: 7px;
-            text-transform: uppercase;
-            opacity: 0.7;
-        }
-        
-        .cell {
+        /* Passerella */
+        /* Celle prenotazioni */
+        .booking-cell {
             min-height: 40px;
             border-right: 1px solid var(--gray-300);
             border-bottom: 1px solid var(--gray-300);
             background: var(--white);
             position: relative;
             cursor: pointer;
-            transition: background 0.2s ease;
-            overflow: visible;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 700;
         }
         
-        .cell:hover {
+        .booking-cell:hover {
             background: var(--gray-100);
         }
         
-        .cell.occupied {
+        .booking-cell.occupied {
             cursor: move;
-            padding: 0;
-            display: block;
-            position: relative;
-            overflow: visible;
-            z-index: 2;
-        }
-        
-        .cell.occupied.first-day {
-            z-index: 5;
-        }
-        
-        .booking-label {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            padding-left: 6px;
-            font-size: 10px;
-            font-weight: 700;
-            color: #1a1a1a;
-            white-space: nowrap;
-            z-index: 10;
-            pointer-events: none;
-            background: transparent;
-        }
-        
-        .cell.occupied.emozione {
-            background: repeating-linear-gradient(
-                45deg,
-                var(--gold-light),
-                var(--gold-light) 10px,
-                var(--gold) 10px,
-                var(--gold) 20px
-            );
-        }
-        
-        .cell.occupied.abbraccio {
-            background: repeating-linear-gradient(
-                45deg,
-                var(--silver-light),
-                var(--silver-light) 10px,
-                var(--silver) 10px,
-                var(--silver) 20px
-            );
-        }
-        
-        .cell.occupied.carezza {
-            background: repeating-linear-gradient(
-                45deg,
-                var(--bronze-light),
-                var(--bronze-light) 10px,
-                var(--bronze) 10px,
-                var(--bronze) 20px
-            );
-        }
-        
-        .cell.occupied.locked {
-            opacity: 0.9;
+            color: var(--gray-800);
             position: relative;
         }
         
-        .cell.occupied.locked.emozione {
-            background: repeating-linear-gradient(
-                45deg,
-                var(--gold),
-                var(--gold) 10px,
-                var(--gold-dark) 10px,
-                var(--gold-dark) 20px
-            );
+        .booking-cell.occupied.emozione {
+            background: repeating-linear-gradient(45deg, var(--gold-light), var(--gold-light) 10px, var(--gold) 10px, var(--gold) 20px);
         }
         
-        .cell.occupied.locked.abbraccio {
-            background: repeating-linear-gradient(
-                45deg,
-                var(--silver),
-                var(--silver) 10px,
-                var(--silver-dark) 10px,
-                var(--silver-dark) 20px
-            );
+        .booking-cell.occupied.abbraccio {
+            background: repeating-linear-gradient(45deg, var(--silver-light), var(--silver-light) 10px, var(--silver) 10px, var(--silver) 20px);
         }
         
-        .cell.occupied.locked.carezza {
-            background: repeating-linear-gradient(
-                45deg,
-                var(--bronze),
-                var(--bronze) 10px,
-                var(--bronze-dark) 10px,
-                var(--bronze-dark) 20px
-            );
+        .booking-cell.occupied.carezza {
+            background: repeating-linear-gradient(45deg, var(--bronze-light), var(--bronze-light) 10px, var(--bronze) 10px, var(--bronze) 20px);
         }
         
-        .cell.occupied.locked::after {
-            content: '🔒';
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            font-size: 10px;
-            opacity: 0.7;
+        .booking-cell.occupied.locked {
+            filter: brightness(1.2);
         }
         
-        .cell.first-day {
+        .booking-cell.first-day {
             border-left: 3px solid var(--gray-800);
             border-top: 3px solid var(--gray-800);
             border-bottom: 3px solid var(--gray-800);
+            overflow: visible;
+            z-index: 10;
         }
         
-        .cell.last-day {
+        .guest-name-label {
+            position: absolute;
+            left: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            white-space: nowrap;
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--gray-800);
+            pointer-events: none;
+            z-index: 20;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+        }
+        
+        .booking-cell.last-day {
             border-right: 3px solid var(--gray-800);
             border-top: 3px solid var(--gray-800);
             border-bottom: 3px solid var(--gray-800);
         }
         
-        .cell.middle-day {
+        .booking-cell.middle-day {
             border-top: 3px solid var(--gray-800);
             border-bottom: 3px solid var(--gray-800);
         }
         
-        .tooltip {
-            position: absolute;
-            background: var(--gray-800);
-            color: var(--white);
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 13px;
-            min-width: 250px;
-            z-index: 1000;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            pointer-events: none;
-            animation: fadeIn 0.2s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .tooltip-row {
-            display: flex;
-            justify-content: space-between;
-            margin: 5px 0;
-            padding: 5px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .tooltip-row:last-child {
-            border-bottom: none;
-        }
-        
-        .tooltip-label {
-            font-weight: 600;
-            opacity: 0.8;
-        }
-        
-        .tooltip-value {
-            font-weight: 500;
-        }
-        
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -601,12 +282,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(5px);
-            z-index: 2000;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
             align-items: center;
             justify-content: center;
-            animation: fadeIn 0.3s ease;
         }
         
         .modal.active {
@@ -615,143 +294,65 @@
         
         .modal-content {
             background: var(--white);
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 600px;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            animation: slideUp 0.3s ease;
-        }
-        
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(50px); }
-            to { opacity: 1; transform: translateY(0); }
         }
         
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--gray-200);
-        }
-        
-        .modal-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--ocean);
+            margin-bottom: 20px;
         }
         
         .close-btn {
             background: none;
             border: none;
-            font-size: 28px;
-            color: var(--gray-600);
+            font-size: 30px;
             cursor: pointer;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-        
-        .close-btn:hover {
-            background: var(--gray-200);
-            color: var(--gray-800);
-            transform: rotate(90deg);
+            color: var(--gray-600);
         }
         
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             font-weight: 600;
-            color: var(--gray-800);
             font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
         
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 12px 15px;
+            padding: 10px;
             border: 2px solid var(--gray-300);
-            border-radius: 8px;
+            border-radius: 6px;
             font-size: 14px;
-            font-family: 'Montserrat', sans-serif;
-            transition: all 0.3s ease;
-        }
-        
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--ocean);
-            box-shadow: 0 0 0 3px rgba(0, 119, 190, 0.1);
-        }
-        
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-        
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .checkbox-group input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-        }
-        
-        .checkbox-group label {
-            margin: 0;
-            cursor: pointer;
-            font-size: 14px;
-            text-transform: none;
-            letter-spacing: normal;
         }
         
         .modal-actions {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             justify-content: flex-end;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid var(--gray-200);
+            margin-top: 20px;
         }
         
         .btn-danger {
-            background: #EF4444;
+            background: #E53E3E;
             color: var(--white);
-        }
-        
-        .btn-danger:hover {
-            background: #DC2626;
         }
         
         .btn-warning {
-            background: #F59E0B;
+            background: #DD6B20;
             color: var(--white);
-        }
-        
-        .btn-warning:hover {
-            background: #D97706;
         }
         
         .loading {
@@ -765,48 +366,10 @@
             border-radius: 15px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
             z-index: 3000;
-            text-align: center;
         }
         
         .loading.active {
             display: block;
-        }
-        
-        .spinner {
-            border: 4px solid var(--gray-300);
-            border-top: 4px solid var(--ocean);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        @media (max-width: 768px) {
-            .header {
-                padding: 20px;
-            }
-            
-            .header h1 {
-                font-size: 24px;
-            }
-            
-            .controls {
-                padding: 20px;
-            }
-            
-            .calendar-wrapper {
-                padding: 20px;
-            }
-            
-            .modal-content {
-                padding: 25px;
-            }
         }
     </style>
 </head>
@@ -815,18 +378,12 @@
         <div class="header">
             <div>
                 <h1>🏖️ Piano Spiaggia 2026</h1>
-                <div class="header-subtitle">Hotel Universal - Gestione Ombrelloni</div>
-            </div>
-            <div class="sync-indicator">
-                <div class="sync-dot"></div>
-                <span>Sincronizzato con Supabase</span>
+                <div style="font-size: 11px; opacity: 0.9; margin-top: 3px;">Hotel Universal</div>
             </div>
         </div>
         
         <div class="controls">
-            <button class="btn btn-secondary" onclick="previousMonth()">
-                ⬅️ Mese Prec.
-            </button>
+            <button class="btn btn-secondary" onclick="previousMonth()">⬅️ Prec.</button>
             
             <div class="control-group">
                 <label>Mese</label>
@@ -846,41 +403,15 @@
                 </select>
             </div>
             
-            <button class="btn btn-secondary" onclick="nextMonth()">
-                Mese Succ. ➡️
-            </button>
+            <button class="btn btn-secondary" onclick="nextMonth()">Succ. ➡️</button>
             
             <div class="control-group" style="flex-grow: 1; max-width: 250px;">
-                <label>🔍 Cerca per nome</label>
-                <input type="text" id="searchGuest" placeholder="Nome o cognome..." onkeyup="searchByGuestName()">
+                <label>🔍 Cerca</label>
+                <input type="text" id="searchGuest" placeholder="Nome ospite..." onkeyup="searchByGuestName()">
             </div>
             
-            <button class="btn btn-primary" onclick="openAddModal()">
-                ➕ Nuova Prenotazione
-            </button>
-            
-            <button class="btn btn-secondary" onclick="refreshData()">
-                🔄 Aggiorna
-            </button>
-        </div>
-        
-        <div class="legend">
-            <span class="legend-title">Formule Spiaggia:</span>
-            <div class="legend-item">
-                <div class="legend-color emozione"></div>
-                <span><strong>Emozione</strong> - Fila 1-3 (1 ombr. + 2 lettini king)</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color abbraccio"></div>
-                <span><strong>Abbraccio</strong> - Fila 4-10 (1 ombr. + 2 lettini king)</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color carezza"></div>
-                <span><strong>Carezza</strong> - Fila 11-14 (1 ombr. + 2 lettini)</span>
-            </div>
-            <div class="legend-item">
-                <span>🔒 = Non spostare (colore più acceso)</span>
-            </div>
+            <button class="btn btn-primary" onclick="openAddModal()">➕ Nuova Prenotazione</button>
+            <button class="btn btn-secondary" onclick="refreshData()">🔄</button>
         </div>
         
         <div class="calendar-wrapper">
@@ -888,11 +419,11 @@
         </div>
     </div>
     
-    <!-- Modal Aggiungi/Modifica Prenotazione -->
+    <!-- Modal -->
     <div id="bookingModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle">Nuova Prenotazione</h2>
+                <h2 id="modalTitle">Nuova Prenotazione</h2>
                 <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
             
@@ -906,92 +437,7 @@
                 
                 <div class="form-group">
                     <label>Ombrellone *</label>
-                    <select id="umbrella" required>
-                        <optgroup label="Fila 1 - Emozione">
-                            <option value="1">Ombrellone 1</option>
-                            <option value="2">Ombrellone 2</option>
-                            <option value="3">Ombrellone 3</option>
-                            <option value="4">Ombrellone 4</option>
-                        </optgroup>
-                        <optgroup label="Fila 2 - Emozione">
-                            <option value="5">Ombrellone 5</option>
-                            <option value="6">Ombrellone 6</option>
-                            <option value="7">Ombrellone 7</option>
-                            <option value="8">Ombrellone 8</option>
-                        </optgroup>
-                        <optgroup label="Fila 3 - Emozione">
-                            <option value="9">Ombrellone 9</option>
-                            <option value="10">Ombrellone 10</option>
-                            <option value="11">Ombrellone 11</option>
-                            <option value="12">Ombrellone 12</option>
-                        </optgroup>
-                        <optgroup label="Fila 4 - Abbraccio">
-                            <option value="13">Ombrellone 13</option>
-                            <option value="14">Ombrellone 14</option>
-                            <option value="15">Ombrellone 15</option>
-                            <option value="16">Ombrellone 16</option>
-                        </optgroup>
-                        <optgroup label="Fila 5 - Abbraccio">
-                            <option value="17">Ombrellone 17</option>
-                            <option value="18">Ombrellone 18</option>
-                            <option value="19">Ombrellone 19</option>
-                            <option value="20">Ombrellone 20</option>
-                        </optgroup>
-                        <optgroup label="Fila 6 - Abbraccio">
-                            <option value="21">Ombrellone 21</option>
-                            <option value="22">Ombrellone 22</option>
-                            <option value="23">Ombrellone 23</option>
-                            <option value="24">Ombrellone 24</option>
-                        </optgroup>
-                        <optgroup label="Fila 7 - Abbraccio">
-                            <option value="25">Ombrellone 25</option>
-                            <option value="26">Ombrellone 26</option>
-                            <option value="27">Ombrellone 27</option>
-                            <option value="28">Ombrellone 28</option>
-                        </optgroup>
-                        <optgroup label="Fila 8 - Abbraccio">
-                            <option value="29">Ombrellone 29</option>
-                            <option value="30">Ombrellone 30</option>
-                            <option value="31">Ombrellone 31</option>
-                            <option value="32">Ombrellone 32</option>
-                        </optgroup>
-                        <optgroup label="Fila 9 - Abbraccio">
-                            <option value="33">Ombrellone 33</option>
-                            <option value="34">Ombrellone 34</option>
-                            <option value="35">Ombrellone 35</option>
-                            <option value="36">Ombrellone 36</option>
-                        </optgroup>
-                        <optgroup label="Fila 10 - Abbraccio">
-                            <option value="37">Ombrellone 37</option>
-                            <option value="38">Ombrellone 38</option>
-                            <option value="39">Ombrellone 39</option>
-                            <option value="40">Ombrellone 40</option>
-                        </optgroup>
-                        <optgroup label="Fila 11 - Carezza">
-                            <option value="41">Ombrellone 41</option>
-                            <option value="42">Ombrellone 42</option>
-                            <option value="43">Ombrellone 43</option>
-                            <option value="44">Ombrellone 44</option>
-                        </optgroup>
-                        <optgroup label="Fila 12 - Carezza">
-                            <option value="45">Ombrellone 45</option>
-                            <option value="46">Ombrellone 46</option>
-                            <option value="47">Ombrellone 47</option>
-                            <option value="48">Ombrellone 48</option>
-                        </optgroup>
-                        <optgroup label="Fila 13 - Carezza">
-                            <option value="49">Ombrellone 49</option>
-                            <option value="50">Ombrellone 50</option>
-                            <option value="51">Ombrellone 51</option>
-                            <option value="52">Ombrellone 52</option>
-                        </optgroup>
-                        <optgroup label="Fila 14 - Carezza">
-                            <option value="53">Ombrellone 53</option>
-                            <option value="54">Ombrellone 54</option>
-                            <option value="55">Ombrellone 55</option>
-                            <option value="56">Ombrellone 56</option>
-                        </optgroup>
-                    </select>
+                    <select id="umbrella" required></select>
                 </div>
                 
                 <div class="form-group">
@@ -1009,9 +455,10 @@
                     <textarea id="notes"></textarea>
                 </div>
                 
-                <div class="checkbox-group">
-                    <input type="checkbox" id="locked">
-                    <label for="locked">🔒 Non spostare (blocca prenotazione)</label>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="locked"> 🔒 Non spostare
+                    </label>
                 </div>
                 
                 <div class="modal-actions">
@@ -1024,48 +471,25 @@
         </div>
     </div>
     
-    <!-- Loading -->
     <div id="loading" class="loading">
-        <div class="spinner"></div>
         <div>Caricamento...</div>
     </div>
     
     <script>
-        // CONFIGURAZIONE SUPABASE
+        // Configurazione Supabase
         const SUPABASE_URL = 'https://nsettzmyswlfrnzwvpsq.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5zZXR0em15c3dsZnJuend2cHNxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwMzA0NzIsImV4cCI6MjA4MTYwNjQ3Mn0.OA2B7-6PVOi8XSaM5_r0Dxv_wpbG5I_ImTxaR0sgUoY';
         
-        // Verifica che Supabase sia caricato
-        if (!window.supabase) {
-            alert('Errore: Libreria Supabase non caricata. Ricarica la pagina.');
-            throw new Error('Supabase library not loaded');
-        }
-        
         let supabaseClient;
-        try {
-            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        } catch (error) {
-            alert('Errore configurazione Supabase: ' + error.message);
-            throw error;
-        }
-        
         let bookings = [];
-        let currentMonth = 5; // Giugno (0-indexed)
+        let currentMonth = 5; // Giugno
         let currentYear = 2026;
-        let draggedBooking = null;
-        let tooltip = null;
         
         // Inizializzazione
         document.addEventListener('DOMContentLoaded', async () => {
-            initializeControls();
-            await loadBookings();
-            renderCalendar();
-            setupRealtimeSubscription();
-        });
-        
-        function initializeControls() {
-            document.getElementById('monthSelect').value = currentMonth;
-            document.getElementById('yearSelect').value = currentYear;
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            
+            populateUmbrellaSelect();
             
             document.getElementById('monthSelect').addEventListener('change', (e) => {
                 currentMonth = parseInt(e.target.value);
@@ -1077,14 +501,41 @@
                 renderCalendar();
             });
             
+            document.getElementById('checkIn').addEventListener('change', updateAvailableUmbrellas);
+            document.getElementById('checkOut').addEventListener('change', updateAvailableUmbrellas);
+            
             document.getElementById('bookingForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 await saveBooking();
             });
             
-            // Aggiorna ombrelloni disponibili quando cambiano le date
-            document.getElementById('checkIn').addEventListener('change', updateAvailableUmbrellas);
-            document.getElementById('checkOut').addEventListener('change', updateAvailableUmbrellas);
+            await loadBookings();
+            renderCalendar();
+        });
+        
+        function populateUmbrellaSelect() {
+            const select = document.getElementById('umbrella');
+            select.innerHTML = '';
+            
+            const formulas = [
+                { name: 'Emozione', start: 1, end: 12 },
+                { name: 'Abbraccio', start: 13, end: 40 },
+                { name: 'Carezza', start: 41, end: 56 }
+            ];
+            
+            formulas.forEach(formula => {
+                const group = document.createElement('optgroup');
+                group.label = formula.name;
+                
+                for (let i = formula.start; i <= formula.end; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = `Ombrellone ${i}`;
+                    group.appendChild(option);
+                }
+                
+                select.appendChild(group);
+            });
         }
         
         async function loadBookings() {
@@ -1093,30 +544,16 @@
                 const { data, error } = await supabaseClient
                     .from('beach_bookings')
                     .select('*')
-                    .order('umbrella', { ascending: true })
-                    .order('check_in', { ascending: true });
+                    .order('umbrella', { ascending: true });
                 
                 if (error) throw error;
                 bookings = data || [];
             } catch (error) {
-                console.error('Errore caricamento:', error);
-                alert('Errore durante il caricamento delle prenotazioni');
+                console.error('Errore:', error);
+                alert('Errore caricamento prenotazioni');
             } finally {
                 hideLoading();
             }
-        }
-        
-        function setupRealtimeSubscription() {
-            supabaseClient
-                .channel('beach_bookings_changes')
-                .on('postgres_changes', 
-                    { event: '*', schema: 'public', table: 'beach_bookings' },
-                    async (payload) => {
-                        await loadBookings();
-                        renderCalendar();
-                    }
-                )
-                .subscribe();
         }
         
         function renderCalendar() {
@@ -1124,110 +561,75 @@
             calendar.innerHTML = '';
             
             const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const totalCols = 3 + daysInMonth; // Formula + Fila + Ombr + Giorni
             
-            // Aggiorna il numero di colonne: FILA + FORMULA + OMBR. + giorni
-            calendar.style.gridTemplateColumns = `50px 130px 50px repeat(${daysInMonth}, minmax(35px, 1fr))`;
+            calendar.style.gridTemplateColumns = `130px 50px 50px repeat(${daysInMonth}, minmax(35px, 1fr))`;
             
-            // === HEADER ROW ===
-            // Colonna "FILA"
-            const filaLabel = document.createElement('div');
-            filaLabel.className = 'day-header';
-            filaLabel.style.fontWeight = '700';
-            filaLabel.style.fontSize = '10px';
-            filaLabel.textContent = 'FILA';
-            calendar.appendChild(filaLabel);
-            
-            // Colonna "FORMULA"
-            const formulaLabel = document.createElement('div');
-            formulaLabel.className = 'day-header';
-            formulaLabel.style.fontWeight = '700';
-            formulaLabel.style.fontSize = '10px';
-            formulaLabel.textContent = 'FORMULA';
-            calendar.appendChild(formulaLabel);
-            
-            // Colonna "OMBR."
-            const ombrLabel = document.createElement('div');
-            ombrLabel.className = 'day-header';
-            ombrLabel.style.fontWeight = '700';
-            ombrLabel.style.fontSize = '10px';
-            ombrLabel.textContent = 'OMBR.';
-            calendar.appendChild(ombrLabel);
-            
-            // Giorni del mese
-            for (let day = 1; day <= daysInMonth; day++) {
-                calendar.appendChild(createDayHeader(day));
+            // Header Mare
+            for (let i = 0; i < 3; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'header-mare';
+                calendar.appendChild(cell);
             }
             
-            // === PASSERELLA ROW ===
-            // Colonna FILA vuota
-            const passFila = document.createElement('div');
-            passFila.className = 'passerella-row';
-            calendar.appendChild(passFila);
+            for (let day = 1; day <= daysInMonth; day++) {
+                const cell = document.createElement('div');
+                cell.className = 'header-mare';
+                const date = new Date(currentYear, currentMonth, day);
+                const dayNames = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
+                cell.innerHTML = `<div style="font-size: 14px;">${day}</div><div style="font-size: 7px; opacity: 0.8;">${dayNames[date.getDay()]}</div>`;
+                calendar.appendChild(cell);
+            }
             
-            // Colonna FORMULA vuota
-            const passFormula = document.createElement('div');
-            passFormula.className = 'passerella-row';
-            calendar.appendChild(passFormula);
-            
-            // Colonna OMBR vuota
-            const passOmbr = document.createElement('div');
-            passOmbr.className = 'passerella-row';
-            calendar.appendChild(passOmbr);
-            
-            // PASSERELLA che occupa tutte le celle dei giorni
-            const passerellaFull = document.createElement('div');
-            passerellaFull.className = 'passerella-full';
-            passerellaFull.textContent = 'PASSERELLA';
-            passerellaFull.style.gridColumn = `span ${daysInMonth}`;
-            calendar.appendChild(passerellaFull);
-            
-            // === RIGHE OMBRELLONI (56 totali) ===
-            let umbrellaNum = 1;
-            
-            const formulas = [
-                { name: 'EMOZIONE', fileStart: 1, fileEnd: 3, class: 'emozione' },
-                { name: 'ABBRACCIO', fileStart: 4, fileEnd: 10, class: 'abbraccio' },
-                { name: 'CAREZZA', fileStart: 11, fileEnd: 14, class: 'carezza' }
+            // Ombrelloni
+            const config = [
+                { formula: 'EMOZIONE', class: 'emozione', start: 1, end: 3 },
+                { formula: 'ABBRACCIO', class: 'abbraccio', start: 4, end: 10 },
+                { formula: 'CAREZZA', class: 'carezza', start: 11, end: 14 }
             ];
             
-            formulas.forEach(formulaGroup => {
-                let firstOfFormula = true;
-                
-                for (let fila = formulaGroup.fileStart; fila <= formulaGroup.fileEnd; fila++) {
-                    let firstOfFila = true;
-                    
-                    // 4 ombrelloni per fila
+            let umbrellaNum = 1;
+            
+            config.forEach(group => {
+                for (let fila = group.start; fila <= group.end; fila++) {
+                    // 4 ombrelloni per fila (NESSUNA passerella)
                     for (let i = 0; i < 4; i++) {
-                        // Colonna FILA (solo per il primo ombrellone della fila)
-                        if (firstOfFila) {
-                            const filaHeader = document.createElement('div');
-                            filaHeader.className = `fila-header ${formulaGroup.class}`;
-                            filaHeader.textContent = `${fila}`;
-                            filaHeader.style.gridRow = `span 4`; // Span 4 righe (4 ombrelloni)
-                            calendar.appendChild(filaHeader);
-                            firstOfFila = false;
+                        // Colonna Formula
+                        if (i === 0 && fila === group.start) {
+                            const cell = document.createElement('div');
+                            cell.className = `col-formula ${group.class}`;
+                            cell.textContent = group.formula;
+                            cell.style.gridRow = `span ${(group.end - group.start + 1) * 4}`;
+                            calendar.appendChild(cell);
                         }
                         
-                        // Colonna FORMULA (solo per il primo ombrellone della formula)
-                        if (firstOfFormula) {
-                            const formulaHeader = document.createElement('div');
-                            formulaHeader.className = `formula-header ${formulaGroup.class}`;
-                            formulaHeader.textContent = formulaGroup.name;
-                            const rowSpan = (formulaGroup.fileEnd - formulaGroup.fileStart + 1) * 4;
-                            formulaHeader.style.gridRow = `span ${rowSpan}`;
-                            calendar.appendChild(formulaHeader);
-                            firstOfFormula = false;
+                        // Colonna Fila
+                        if (i === 0) {
+                            const cell = document.createElement('div');
+                            cell.className = 'col-fila';
+                            cell.textContent = fila;
+                            cell.style.gridRow = 'span 4';
+                            calendar.appendChild(cell);
                         }
                         
-                        // Colonna OMBRELLONE
-                        const umbrellaHeader = document.createElement('div');
-                        umbrellaHeader.className = 'row-header';
-                        umbrellaHeader.textContent = umbrellaNum;
-                        calendar.appendChild(umbrellaHeader);
+                        // Colonna Ombrellone
+                        const ombrCell = document.createElement('div');
+                        ombrCell.className = 'col-ombr';
+                        ombrCell.textContent = umbrellaNum;
                         
-                        // Celle giorni per questo ombrellone
+                        // Colora di giallo i numeri prima della passerella
+                        const passerellaNumbers = [1,5,9,13,17,21,25,29,33,37,41,45,49,53];
+                        if (passerellaNumbers.includes(umbrellaNum)) {
+                            ombrCell.style.background = '#FFD700';
+                            ombrCell.style.fontWeight = '700';
+                        }
+                        
+                        calendar.appendChild(ombrCell);
+                        
+                        // Celle giorni
                         for (let day = 1; day <= daysInMonth; day++) {
-                            calendar.appendChild(createCell(umbrellaNum, day, formulaGroup.class));
+                            const cell = createBookingCell(umbrellaNum, day, group.class);
+                            calendar.appendChild(cell);
                         }
                         
                         umbrellaNum++;
@@ -1236,22 +638,9 @@
             });
         }
         
-        function createDayHeader(day) {
-            const date = new Date(currentYear, currentMonth, day);
-            const dayNames = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
-            
-            const header = document.createElement('div');
-            header.className = 'day-header';
-            header.innerHTML = `
-                <span class="day-num">${day}</span>
-                <span class="day-name">${dayNames[date.getDay()]}</span>
-            `;
-            return header;
-        }
-        
-        function createCell(umbrellaNum, day, formula) {
+        function createBookingCell(umbrellaNum, day, formula) {
             const cell = document.createElement('div');
-            cell.className = 'cell';
+            cell.className = 'booking-cell';
             cell.dataset.umbrella = umbrellaNum;
             cell.dataset.day = day;
             
@@ -1261,13 +650,9 @@
             const booking = findBookingForCell(umbrellaNum, dateStr);
             
             if (booking) {
-                cell.classList.add('occupied');
-                cell.classList.add(booking.formula);
-                if (booking.locked) {
-                    cell.classList.add('locked');
-                }
+                cell.classList.add('occupied', booking.formula);
+                if (booking.locked) cell.classList.add('locked');
                 
-                // Aggiungi bordi per prenotazioni continue
                 const checkIn = new Date(booking.check_in + 'T00:00:00');
                 const checkOut = new Date(booking.check_out + 'T00:00:00');
                 const dayBefore = new Date(checkOut);
@@ -1276,68 +661,34 @@
                 const isFirstDay = date.getTime() === checkIn.getTime();
                 const isLastDay = date.getTime() === dayBefore.getTime();
                 
+                // Mostra il nome SOLO nel primo giorno come elemento che si estende
                 if (isFirstDay) {
                     cell.classList.add('first-day');
                     
-                    // Calcola durata in giorni
-                    const durationMs = dayBefore.getTime() - checkIn.getTime();
-                    const durationDays = Math.floor(durationMs / (1000 * 60 * 60 * 24)) + 1;
-                    
-                    // Crea label con nome
-                    const label = document.createElement('div');
-                    label.className = 'booking-label';
-                    label.textContent = booking.guest_name;
-                    
-                    // Larghezza = numero celle × larghezza approssimativa (40px è una stima sicura)
-                    const estimatedWidth = durationDays * 40;
-                    label.style.width = estimatedWidth + 'px';
-                    
-                    cell.appendChild(label);
-                    
+                    const nameLabel = document.createElement('div');
+                    nameLabel.className = 'guest-name-label';
+                    nameLabel.textContent = booking.guest_name;
+                    cell.appendChild(nameLabel);
                 } else if (isLastDay) {
                     cell.classList.add('last-day');
                 } else {
                     cell.classList.add('middle-day');
                 }
                 
-                cell.dataset.bookingId = booking.id;
-                cell.draggable = !booking.locked;
-                
-                // Eventi mouse
-                cell.addEventListener('mouseenter', (e) => showTooltip(e, booking));
-                cell.addEventListener('mouseleave', hideTooltip);
-                cell.addEventListener('click', () => openEditModal(booking));
-                
-                // Eventi drag & drop
-                if (!booking.locked) {
-                    cell.addEventListener('dragstart', handleDragStart);
-                    cell.addEventListener('dragend', handleDragEnd);
-                }
+                cell.title = `${booking.guest_name} - ${formatDateIT(booking.check_in)} / ${formatDateIT(booking.check_out)}`;
+                cell.onclick = () => openEditModal(booking);
             }
             
-            cell.addEventListener('dragover', handleDragOver);
-            cell.addEventListener('drop', handleDrop);
-            
             return cell;
-        }
-        
-        function getFormula(fila) {
-            if (fila >= 1 && fila <= 3) return 'emozione';
-            if (fila >= 4 && fila <= 10) return 'abbraccio';
-            if (fila >= 11 && fila <= 14) return 'carezza';
-            return '';
         }
         
         function findBookingForCell(umbrella, dateStr) {
             return bookings.find(b => {
                 if (b.umbrella !== umbrella) return false;
                 
-                // Normalizza tutte le date a mezzanotte locale per confronto accurato
                 const checkIn = new Date(b.check_in + 'T00:00:00');
                 const checkOut = new Date(b.check_out + 'T00:00:00');
                 const cellDate = new Date(dateStr + 'T00:00:00');
-                
-                // La prenotazione va dal check-in al giorno PRIMA del check-out
                 const dayBefore = new Date(checkOut);
                 dayBefore.setDate(dayBefore.getDate() - 1);
                 
@@ -1345,121 +696,23 @@
             });
         }
         
-        function showTooltip(e, booking) {
-            hideTooltip();
-            
-            tooltip = document.createElement('div');
-            tooltip.className = 'tooltip';
-            tooltip.innerHTML = `
-                <div class="tooltip-row">
-                    <span class="tooltip-label">Ospite:</span>
-                    <span class="tooltip-value">${booking.guest_name}</span>
-                </div>
-                <div class="tooltip-row">
-                    <span class="tooltip-label">Formula:</span>
-                    <span class="tooltip-value">${capitalizeFormula(booking.formula)}</span>
-                </div>
-                <div class="tooltip-row">
-                    <span class="tooltip-label">Check-in:</span>
-                    <span class="tooltip-value">${formatDateIT(booking.check_in)}</span>
-                </div>
-                <div class="tooltip-row">
-                    <span class="tooltip-label">Check-out:</span>
-                    <span class="tooltip-value">${formatDateIT(booking.check_out)}</span>
-                </div>
-                ${booking.notes ? `
-                <div class="tooltip-row">
-                    <span class="tooltip-label">Note:</span>
-                    <span class="tooltip-value">${booking.notes}</span>
-                </div>
-                ` : ''}
-                ${booking.locked ? `
-                <div class="tooltip-row">
-                    <span class="tooltip-value" style="color: #F59E0B;">🔒 Prenotazione bloccata</span>
-                </div>
-                ` : ''}
-            `;
-            
-            document.body.appendChild(tooltip);
-            
-            const rect = e.target.getBoundingClientRect();
-            tooltip.style.left = rect.left + window.scrollX + 'px';
-            tooltip.style.top = (rect.bottom + window.scrollY + 10) + 'px';
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
         }
         
-        function hideTooltip() {
-            if (tooltip) {
-                tooltip.remove();
-                tooltip = null;
-            }
+        function formatDateIT(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('it-IT');
         }
         
-        function handleDragStart(e) {
-            const bookingId = parseInt(e.target.dataset.bookingId);
-            draggedBooking = bookings.find(b => b.id === bookingId);
-            e.dataTransfer.effectAllowed = 'move';
-            e.target.style.opacity = '0.5';
-        }
-        
-        function handleDragEnd(e) {
-            e.target.style.opacity = '1';
-            draggedBooking = null;
-        }
-        
-        function handleDragOver(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-        }
-        
-        async function handleDrop(e) {
-            e.preventDefault();
-            
-            if (!draggedBooking) return;
-            
-            const newUmbrella = parseInt(e.target.dataset.umbrella);
-            const newDay = parseInt(e.target.dataset.day);
-            
-            if (!newUmbrella || !newDay) return;
-            
-            // Calcola la nuova data di check-in
-            const newCheckIn = new Date(currentYear, currentMonth, newDay);
-            
-            // Calcola la durata della prenotazione originale
-            const oldCheckIn = new Date(draggedBooking.check_in);
-            const oldCheckOut = new Date(draggedBooking.check_out);
-            const duration = Math.ceil((oldCheckOut - oldCheckIn) / (1000 * 60 * 60 * 24));
-            
-            // Calcola il nuovo check-out
-            const newCheckOut = new Date(newCheckIn);
-            newCheckOut.setDate(newCheckOut.getDate() + duration);
-            
-            // Calcola la fila dall'ombrellone e poi la formula
-            const newFila = Math.ceil(newUmbrella / 4);
-            const newFormula = getFormula(newFila);
-            
-            try {
-                showLoading();
-                
-                const { error } = await supabaseClient
-                    .from('beach_bookings')
-                    .update({
-                        umbrella: newUmbrella,
-                        check_in: formatDate(newCheckIn),
-                        check_out: formatDate(newCheckOut),
-                        formula: newFormula
-                    })
-                    .eq('id', draggedBooking.id);
-                
-                if (error) throw error;
-                
-                await loadBookings();
-                renderCalendar();
-            } catch (error) {
-                console.error('Errore spostamento:', error);
-                alert('Errore durante lo spostamento della prenotazione');
-            } finally {
-                hideLoading();
-            }
+        function getFormula(umbrellaNum) {
+            if (umbrellaNum >= 1 && umbrellaNum <= 12) return 'emozione';
+            if (umbrellaNum >= 13 && umbrellaNum <= 40) return 'abbraccio';
+            if (umbrellaNum >= 41 && umbrellaNum <= 56) return 'carezza';
+            return '';
         }
         
         function openAddModal() {
@@ -1468,7 +721,7 @@
             document.getElementById('bookingId').value = '';
             document.getElementById('deleteBtn').style.display = 'none';
             document.getElementById('splitBtn').style.display = 'none';
-            resetUmbrellaSelect(); // Resetta il select degli ombrelloni
+            resetUmbrellaSelect();
             document.getElementById('bookingModal').classList.add('active');
         }
         
@@ -1483,7 +736,7 @@
             document.getElementById('locked').checked = booking.locked || false;
             document.getElementById('deleteBtn').style.display = 'block';
             document.getElementById('splitBtn').style.display = 'block';
-            updateAvailableUmbrellas(); // Aggiorna ombrelloni disponibili
+            updateAvailableUmbrellas();
             document.getElementById('bookingModal').classList.add('active');
         }
         
@@ -1491,122 +744,14 @@
             document.getElementById('bookingModal').classList.remove('active');
         }
         
-        function updateAvailableUmbrellas() {
-            const checkInStr = document.getElementById('checkIn').value;
-            const checkOutStr = document.getElementById('checkOut').value;
-            const currentBookingId = document.getElementById('bookingId').value;
-            
-            if (!checkInStr || !checkOutStr) {
-                // Se non ci sono entrambe le date, mostra tutti gli ombrelloni
-                resetUmbrellaSelect();
-                return;
-            }
-            
-            const checkIn = new Date(checkInStr + 'T00:00:00');
-            const checkOut = new Date(checkOutStr + 'T00:00:00');
-            
-            if (checkOut <= checkIn) {
-                alert('La data di check-out deve essere successiva al check-in');
-                return;
-            }
-            
-            // Trova ombrelloni occupati nel periodo
-            const occupiedUmbrellas = new Set();
-            
-            bookings.forEach(booking => {
-                // Salta la prenotazione corrente in caso di modifica
-                if (currentBookingId && booking.id === parseInt(currentBookingId)) {
-                    return;
-                }
-                
-                const bookingCheckIn = new Date(booking.check_in + 'T00:00:00');
-                const bookingCheckOut = new Date(booking.check_out + 'T00:00:00');
-                
-                // Controlla se c'è sovrapposizione
-                // Due periodi si sovrappongono se: checkIn < bookingCheckOut AND checkOut > bookingCheckIn
-                if (checkIn < bookingCheckOut && checkOut > bookingCheckIn) {
-                    occupiedUmbrellas.add(booking.umbrella);
-                }
-            });
-            
-            // Aggiorna il select
-            const select = document.getElementById('umbrella');
-            const options = select.querySelectorAll('option');
-            
-            options.forEach(option => {
-                const umbrellaNum = parseInt(option.value);
-                if (umbrellaNum && occupiedUmbrellas.has(umbrellaNum)) {
-                    option.disabled = true;
-                    option.textContent = option.textContent.replace(' (occupato)', '') + ' (occupato)';
-                } else if (umbrellaNum) {
-                    option.disabled = false;
-                    option.textContent = option.textContent.replace(' (occupato)', '');
-                }
-            });
-        }
-        
-        function resetUmbrellaSelect() {
-            const select = document.getElementById('umbrella');
-            const options = select.querySelectorAll('option');
-            
-            options.forEach(option => {
-                option.disabled = false;
-                option.textContent = option.textContent.replace(' (occupato)', '');
-            });
-        }
-        
-        function searchByGuestName() {
-            const searchTerm = document.getElementById('searchGuest').value.toLowerCase().trim();
-            
-            if (!searchTerm) {
-                // Se il campo è vuoto, torna al mese corrente
-                renderCalendar();
-                return;
-            }
-            
-            // Trova tutte le prenotazioni che corrispondono
-            const matchingBookings = bookings.filter(booking => 
-                booking.guest_name.toLowerCase().includes(searchTerm)
-            );
-            
-            if (matchingBookings.length === 0) {
-                alert('Nessuna prenotazione trovata per: ' + searchTerm);
-                return;
-            }
-            
-            // Prendi la prima prenotazione trovata e vai a quel mese
-            const firstMatch = matchingBookings[0];
-            const checkInDate = new Date(firstMatch.check_in);
-            
-            currentMonth = checkInDate.getMonth();
-            currentYear = checkInDate.getFullYear();
-            
-            document.getElementById('monthSelect').value = currentMonth;
-            document.getElementById('yearSelect').value = currentYear;
-            
-            renderCalendar();
-            
-            // Mostra un alert con i risultati
-            const resultText = matchingBookings.map(b => {
-                const checkIn = new Date(b.check_in);
-                const checkOut = new Date(b.check_out);
-                return `${b.guest_name} - Ombrellone ${b.umbrella} - ${formatDateIT(b.check_in)} / ${formatDateIT(b.check_out)}`;
-            }).join('\n');
-            
-            alert(`Trovate ${matchingBookings.length} prenotazioni:\n\n${resultText}`);
-        }
-        
         async function saveBooking() {
             const id = document.getElementById('bookingId').value;
-            const umbrella = parseInt(document.getElementById('umbrella').value);
-            
-            // Calcola la fila dall'ombrellone (1-4 → Fila 1, 5-8 → Fila 2, etc.)
-            const fila = Math.ceil(umbrella / 4);
-            const formula = getFormula(fila);
+            const umbrellaNum = parseInt(document.getElementById('umbrella').value);
+            const formula = getFormula(umbrellaNum);
             
             const bookingData = {
                 guest_name: document.getElementById('guestName').value,
-                umbrella: umbrella,
+                umbrella: umbrellaNum,
                 check_in: document.getElementById('checkIn').value,
                 check_out: document.getElementById('checkOut').value,
                 notes: document.getElementById('notes').value,
@@ -1618,7 +763,6 @@
                 showLoading();
                 
                 if (id) {
-                    // Aggiorna esistente
                     const { error } = await supabaseClient
                         .from('beach_bookings')
                         .update(bookingData)
@@ -1626,7 +770,6 @@
                     
                     if (error) throw error;
                 } else {
-                    // Crea nuovo
                     const { error } = await supabaseClient
                         .from('beach_bookings')
                         .insert([bookingData]);
@@ -1637,22 +780,22 @@
                 await loadBookings();
                 renderCalendar();
                 closeModal();
+                alert('Prenotazione salvata!');
             } catch (error) {
-                console.error('Errore salvataggio:', error);
-                alert('Errore durante il salvataggio della prenotazione');
+                console.error('Errore:', error);
+                alert('Errore durante il salvataggio');
             } finally {
                 hideLoading();
             }
         }
         
         async function deleteBooking() {
-            if (!confirm('Sei sicuro di voler eliminare questa prenotazione?')) return;
+            if (!confirm('Eliminare questa prenotazione?')) return;
             
             const id = document.getElementById('bookingId').value;
             
             try {
                 showLoading();
-                
                 const { error } = await supabaseClient
                     .from('beach_bookings')
                     .delete()
@@ -1663,9 +806,10 @@
                 await loadBookings();
                 renderCalendar();
                 closeModal();
+                alert('Prenotazione eliminata!');
             } catch (error) {
-                console.error('Errore eliminazione:', error);
-                alert('Errore durante l\'eliminazione della prenotazione');
+                console.error('Errore:', error);
+                alert('Errore durante l\'eliminazione');
             } finally {
                 hideLoading();
             }
@@ -1677,64 +821,132 @@
             
             if (!booking) return;
             
-            const splitDate = prompt('Inserisci la data di divisione (YYYY-MM-DD):');
+            const splitDate = prompt('Data di divisione (YYYY-MM-DD):');
             if (!splitDate) return;
             
-            const split = new Date(splitDate);
-            const checkIn = new Date(booking.check_in);
-            const checkOut = new Date(booking.check_out);
+            const split = new Date(splitDate + 'T00:00:00');
+            const checkIn = new Date(booking.check_in + 'T00:00:00');
+            const checkOut = new Date(booking.check_out + 'T00:00:00');
             
             if (split <= checkIn || split >= checkOut) {
-                alert('La data di divisione deve essere tra il check-in e il check-out');
+                alert('Data non valida');
                 return;
             }
             
             try {
                 showLoading();
                 
-                // Aggiorna la prenotazione originale (prima parte)
-                const { error: updateError } = await supabaseClient
+                await supabaseClient
                     .from('beach_bookings')
                     .update({ check_out: formatDate(split) })
                     .eq('id', id);
                 
-                if (updateError) throw updateError;
-                
-                // Crea la seconda prenotazione
-                const { error: insertError } = await supabaseClient
+                await supabaseClient
                     .from('beach_bookings')
                     .insert([{
                         guest_name: booking.guest_name,
                         umbrella: booking.umbrella,
                         check_in: formatDate(split),
                         check_out: booking.check_out,
-                        notes: booking.notes ? booking.notes + ' (Divisa)' : '(Divisa)',
+                        notes: (booking.notes || '') + ' (Divisa)',
                         locked: booking.locked,
                         formula: booking.formula
                     }]);
                 
-                if (insertError) throw insertError;
-                
                 await loadBookings();
                 renderCalendar();
                 closeModal();
-                alert('Prenotazione divisa con successo!');
+                alert('Prenotazione divisa!');
             } catch (error) {
-                console.error('Errore divisione:', error);
-                alert('Errore durante la divisione della prenotazione');
+                console.error('Errore:', error);
+                alert('Errore durante la divisione');
             } finally {
                 hideLoading();
             }
         }
         
-        async function refreshData() {
-            await loadBookings();
+        function updateAvailableUmbrellas() {
+            const checkIn = document.getElementById('checkIn').value;
+            const checkOut = document.getElementById('checkOut').value;
+            const currentId = document.getElementById('bookingId').value;
+            
+            if (!checkIn || !checkOut) return;
+            
+            const checkInDate = new Date(checkIn + 'T00:00:00');
+            const checkOutDate = new Date(checkOut + 'T00:00:00');
+            
+            if (checkOutDate <= checkInDate) {
+                alert('Check-out deve essere dopo check-in');
+                return;
+            }
+            
+            const occupied = new Set();
+            
+            bookings.forEach(b => {
+                if (currentId && b.id === parseInt(currentId)) return;
+                
+                const bIn = new Date(b.check_in + 'T00:00:00');
+                const bOut = new Date(b.check_out + 'T00:00:00');
+                
+                if (checkInDate < bOut && checkOutDate > bIn) {
+                    occupied.add(b.umbrella);
+                }
+            });
+            
+            const select = document.getElementById('umbrella');
+            const options = select.querySelectorAll('option');
+            
+            options.forEach(opt => {
+                const num = parseInt(opt.value);
+                if (occupied.has(num)) {
+                    opt.disabled = true;
+                    opt.textContent = opt.textContent.replace(' (occupato)', '') + ' (occupato)';
+                } else {
+                    opt.disabled = false;
+                    opt.textContent = opt.textContent.replace(' (occupato)', '');
+                }
+            });
+        }
+        
+        function resetUmbrellaSelect() {
+            const options = document.querySelectorAll('#umbrella option');
+            options.forEach(opt => {
+                opt.disabled = false;
+                opt.textContent = opt.textContent.replace(' (occupato)', '');
+            });
+        }
+        
+        function searchByGuestName() {
+            const term = document.getElementById('searchGuest').value.toLowerCase().trim();
+            
+            if (!term) {
+                renderCalendar();
+                return;
+            }
+            
+            const matches = bookings.filter(b => b.guest_name.toLowerCase().includes(term));
+            
+            if (matches.length === 0) {
+                alert('Nessuna prenotazione trovata');
+                return;
+            }
+            
+            const first = matches[0];
+            const date = new Date(first.check_in);
+            
+            currentMonth = date.getMonth();
+            currentYear = date.getFullYear();
+            
+            document.getElementById('monthSelect').value = currentMonth;
+            document.getElementById('yearSelect').value = currentYear;
+            
             renderCalendar();
+            
+            alert(`Trovate ${matches.length} prenotazioni per "${term}"`);
         }
         
         function previousMonth() {
             if (currentMonth === 4) {
-                // Da Maggio torna a Settembre dell'anno precedente
                 currentMonth = 8;
                 currentYear--;
             } else {
@@ -1748,7 +960,6 @@
         
         function nextMonth() {
             if (currentMonth === 8) {
-                // Da Settembre va a Maggio dell'anno successivo
                 currentMonth = 4;
                 currentYear++;
             } else {
@@ -1760,33 +971,17 @@
             renderCalendar();
         }
         
+        async function refreshData() {
+            await loadBookings();
+            renderCalendar();
+        }
+        
         function showLoading() {
             document.getElementById('loading').classList.add('active');
         }
         
         function hideLoading() {
             document.getElementById('loading').classList.remove('active');
-        }
-        
-        function formatDate(date) {
-            // Usa le componenti locali per evitare problemi di fuso orario
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-        
-        function formatDateIT(dateStr) {
-            const date = new Date(dateStr);
-            return date.toLocaleDateString('it-IT', { 
-                day: '2-digit', 
-                month: '2-digit', 
-                year: 'numeric' 
-            });
-        }
-        
-        function capitalizeFormula(formula) {
-            return formula.charAt(0).toUpperCase() + formula.slice(1);
         }
     </script>
 </body>
