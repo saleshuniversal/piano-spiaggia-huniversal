@@ -241,6 +241,15 @@
             filter: brightness(1.2);
         }
         
+        /* Check-in/Check-out states */
+        .booking-cell.occupied.status-checked-in {
+            background: repeating-linear-gradient(45deg, #FEB2B2, #FEB2B2 10px, #FC8181 10px, #FC8181 20px) !important;
+        }
+        
+        .booking-cell.occupied.status-checked-out {
+            background: repeating-linear-gradient(45deg, #CBD5E0, #CBD5E0 10px, #A0AEC0 10px, #A0AEC0 20px) !important;
+        }
+        
         .booking-cell.first-day {
             border-left: 3px solid var(--gray-800);
             border-top: 3px solid var(--gray-800);
@@ -371,6 +380,45 @@
         .loading.active {
             display: block;
         }
+        
+        /* Context Menu */
+        .context-menu {
+            position: fixed;
+            background: var(--white);
+            border: 2px solid var(--gray-300);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 5000;
+            min-width: 180px;
+            display: none;
+        }
+        
+        .context-menu.active {
+            display: block;
+        }
+        
+        .context-menu-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            font-size: 13px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .context-menu-item:last-child {
+            border-bottom: none;
+        }
+        
+        .context-menu-item:hover {
+            background: var(--gray-100);
+        }
+        
+        .context-menu-item.danger:hover {
+            background: #FED7D7;
+            color: #C53030;
+        }
     </style>
 </head>
 <body>
@@ -442,12 +490,12 @@
                 
                 <div class="form-group">
                     <label>Check-in *</label>
-                    <input type="date" id="checkIn" required>
+                    <input type="date" id="checkIn" min="2026-05-01" max="2026-09-30" required>
                 </div>
                 
                 <div class="form-group">
                     <label>Check-out *</label>
-                    <input type="date" id="checkOut" required>
+                    <input type="date" id="checkOut" min="2026-05-01" max="2026-09-30" required>
                 </div>
                 
                 <div class="form-group">
@@ -475,6 +523,22 @@
         <div>Caricamento...</div>
     </div>
     
+    <!-- Context Menu -->
+    <div id="contextMenu" class="context-menu">
+        <div class="context-menu-item" onclick="handleCheckIn()">
+            🟢 Check-in
+        </div>
+        <div class="context-menu-item" onclick="handleCheckOut()">
+            ⚫ Check-out
+        </div>
+        <div class="context-menu-item" onclick="handleEdit()">
+            ✏️ Modifica
+        </div>
+        <div class="context-menu-item danger" onclick="handleDelete()">
+            🗑️ Elimina
+        </div>
+    </div>
+    
     <script>
         // Configurazione Supabase
         const SUPABASE_URL = 'https://nsettzmyswlfrnzwvpsq.supabase.co';
@@ -484,6 +548,8 @@
         let bookings = [];
         let currentMonth = 5; // Giugno
         let currentYear = 2026;
+        let contextMenuBooking = null;
+        let draggedBooking = null;
         
         // Inizializzazione
         document.addEventListener('DOMContentLoaded', async () => {
@@ -511,6 +577,11 @@
             
             await loadBookings();
             renderCalendar();
+            
+            // Chiudi context menu cliccando altrove
+            document.addEventListener('click', () => {
+                document.getElementById('contextMenu').classList.remove('active');
+            });
         });
         
         function populateUmbrellaSelect() {
@@ -653,6 +724,13 @@
                 cell.classList.add('occupied', booking.formula);
                 if (booking.locked) cell.classList.add('locked');
                 
+                // Status: pending, checked-in, checked-out
+                if (booking.status === 'checked-in') {
+                    cell.classList.add('status-checked-in');
+                } else if (booking.status === 'checked-out') {
+                    cell.classList.add('status-checked-out');
+                }
+                
                 const checkIn = new Date(booking.check_in + 'T00:00:00');
                 const checkOut = new Date(booking.check_out + 'T00:00:00');
                 const dayBefore = new Date(checkOut);
@@ -676,7 +754,62 @@
                 }
                 
                 cell.title = `${booking.guest_name} - ${formatDateIT(booking.check_in)} / ${formatDateIT(booking.check_out)}`;
-                cell.onclick = () => openEditModal(booking);
+                
+                // Drag & Drop
+                cell.draggable = true;
+                cell.style.cursor = 'move';
+                
+                cell.addEventListener('dragstart', (e) => {
+                    draggedBooking = booking;
+                    cell.style.opacity = '0.5';
+                });
+                
+                cell.addEventListener('dragend', (e) => {
+                    cell.style.opacity = '1';
+                });
+                
+                // Context menu con tasto destro
+                cell.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    contextMenuBooking = booking;
+                    
+                    const menu = document.getElementById('contextMenu');
+                    menu.style.left = e.pageX + 'px';
+                    menu.style.top = e.pageY + 'px';
+                    menu.classList.add('active');
+                });
+                
+                // Click normale per modificare
+                cell.addEventListener('click', (e) => {
+                    if (!e.ctrlKey && !e.metaKey) {
+                        openEditModal(booking);
+                    }
+                });
+            } else {
+                // Cella vuota - permetti drop e click per creare
+                cell.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    cell.style.background = '#E6FFFA';
+                });
+                
+                cell.addEventListener('dragleave', (e) => {
+                    cell.style.background = '';
+                });
+                
+                cell.addEventListener('drop', async (e) => {
+                    e.preventDefault();
+                    cell.style.background = '';
+                    
+                    if (draggedBooking) {
+                        await moveBooking(draggedBooking, umbrellaNum, dateStr);
+                        draggedBooking = null;
+                    }
+                });
+                
+                // Click su cella vuota per creare prenotazione
+                cell.addEventListener('click', () => {
+                    openAddModalForCell(umbrellaNum, dateStr);
+                });
             }
             
             return cell;
@@ -758,6 +891,11 @@
                 locked: document.getElementById('locked').checked,
                 formula: formula
             };
+            
+            // Aggiungi status solo per nuove prenotazioni
+            if (!id) {
+                bookingData.status = 'pending';
+            }
             
             try {
                 showLoading();
@@ -850,7 +988,8 @@
                         check_out: booking.check_out,
                         notes: (booking.notes || '') + ' (Divisa)',
                         locked: booking.locked,
-                        formula: booking.formula
+                        formula: booking.formula,
+                        status: 'pending'
                     }]);
                 
                 await loadBookings();
@@ -946,9 +1085,11 @@
         }
         
         function previousMonth() {
+            // Limita a Maggio-Settembre
             if (currentMonth === 4) {
-                currentMonth = 8;
-                currentYear--;
+                // Da Maggio non si può andare indietro
+                alert('Non è possibile inserire prenotazioni prima di Maggio');
+                return;
             } else {
                 currentMonth--;
             }
@@ -959,9 +1100,11 @@
         }
         
         function nextMonth() {
+            // Limita a Maggio-Settembre
             if (currentMonth === 8) {
-                currentMonth = 4;
-                currentYear++;
+                // Da Settembre non si può andare avanti
+                alert('Non è possibile inserire prenotazioni dopo Settembre');
+                return;
             } else {
                 currentMonth++;
             }
@@ -982,6 +1125,153 @@
         
         function hideLoading() {
             document.getElementById('loading').classList.remove('active');
+        }
+        
+        // Context Menu Functions
+        async function handleCheckIn() {
+            if (!contextMenuBooking) return;
+            
+            try {
+                showLoading();
+                const { error } = await supabaseClient
+                    .from('beach_bookings')
+                    .update({ status: 'checked-in' })
+                    .eq('id', contextMenuBooking.id);
+                
+                if (error) throw error;
+                
+                await loadBookings();
+                renderCalendar();
+                alert('Check-in effettuato!');
+            } catch (error) {
+                console.error('Errore:', error);
+                alert('Errore durante il check-in');
+            } finally {
+                hideLoading();
+                contextMenuBooking = null;
+            }
+        }
+        
+        async function handleCheckOut() {
+            if (!contextMenuBooking) return;
+            
+            try {
+                showLoading();
+                const { error } = await supabaseClient
+                    .from('beach_bookings')
+                    .update({ status: 'checked-out' })
+                    .eq('id', contextMenuBooking.id);
+                
+                if (error) throw error;
+                
+                await loadBookings();
+                renderCalendar();
+                alert('Check-out effettuato!');
+            } catch (error) {
+                console.error('Errore:', error);
+                alert('Errore durante il check-out');
+            } finally {
+                hideLoading();
+                contextMenuBooking = null;
+            }
+        }
+        
+        function handleEdit() {
+            if (!contextMenuBooking) return;
+            openEditModal(contextMenuBooking);
+            contextMenuBooking = null;
+        }
+        
+        async function handleDelete() {
+            if (!contextMenuBooking) return;
+            
+            if (!confirm('Eliminare questa prenotazione?')) {
+                contextMenuBooking = null;
+                return;
+            }
+            
+            try {
+                showLoading();
+                const { error } = await supabaseClient
+                    .from('beach_bookings')
+                    .delete()
+                    .eq('id', contextMenuBooking.id);
+                
+                if (error) throw error;
+                
+                await loadBookings();
+                renderCalendar();
+                alert('Prenotazione eliminata!');
+            } catch (error) {
+                console.error('Errore:', error);
+                alert('Errore durante l\'eliminazione');
+            } finally {
+                hideLoading();
+                contextMenuBooking = null;
+            }
+        }
+        
+        // Drag & Drop
+        async function moveBooking(booking, newUmbrella, newStartDate) {
+            if (booking.locked) {
+                alert('Questa prenotazione è bloccata e non può essere spostata');
+                return;
+            }
+            
+            const checkIn = new Date(booking.check_in + 'T00:00:00');
+            const checkOut = new Date(booking.check_out + 'T00:00:00');
+            const duration = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+            
+            const newCheckIn = new Date(newStartDate + 'T00:00:00');
+            const newCheckOut = new Date(newCheckIn);
+            newCheckOut.setDate(newCheckOut.getDate() + duration);
+            
+            const newFormula = getFormula(newUmbrella);
+            
+            try {
+                showLoading();
+                const { error } = await supabaseClient
+                    .from('beach_bookings')
+                    .update({
+                        umbrella: newUmbrella,
+                        check_in: formatDate(newCheckIn),
+                        check_out: formatDate(newCheckOut),
+                        formula: newFormula
+                    })
+                    .eq('id', booking.id);
+                
+                if (error) throw error;
+                
+                await loadBookings();
+                renderCalendar();
+            } catch (error) {
+                console.error('Errore:', error);
+                alert('Errore durante lo spostamento');
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        // Click su cella vuota per creare prenotazione
+        function openAddModalForCell(umbrella, startDate) {
+            document.getElementById('modalTitle').textContent = 'Nuova Prenotazione';
+            document.getElementById('bookingForm').reset();
+            document.getElementById('bookingId').value = '';
+            document.getElementById('deleteBtn').style.display = 'none';
+            document.getElementById('splitBtn').style.display = 'none';
+            
+            // Precompila ombrellone e data
+            document.getElementById('umbrella').value = umbrella;
+            document.getElementById('checkIn').value = startDate;
+            
+            // Imposta check-out al giorno successivo
+            const nextDay = new Date(startDate + 'T00:00:00');
+            nextDay.setDate(nextDay.getDate() + 1);
+            document.getElementById('checkOut').value = formatDate(nextDay);
+            
+            resetUmbrellaSelect();
+            updateAvailableUmbrellas();
+            document.getElementById('bookingModal').classList.add('active');
         }
     </script>
 </body>
