@@ -534,6 +534,9 @@
         <div class="context-menu-item" onclick="handleSplit()">
             ✂️ Dividi
         </div>
+        <div class="context-menu-item" onclick="handleMerge()">
+            🔗 Unisci
+        </div>
         <div class="context-menu-item" onclick="handleEdit()">
             ✏️ Modifica
         </div>
@@ -1261,6 +1264,28 @@
                 return;
             }
             
+            // Chiedi ombrellone per la seconda parte
+            const newUmbrellaStr = prompt(
+                `Inserisci il numero di ombrellone per la seconda parte (${formatDate(split)} - ${formatDateIT(booking.check_out)}).\n` +
+                `Lascia vuoto per mantenere lo stesso ombrellone (${booking.umbrella}):`,
+                booking.umbrella
+            );
+            
+            if (newUmbrellaStr === null) {
+                contextMenuBooking = null;
+                return;
+            }
+            
+            const newUmbrella = parseInt(newUmbrellaStr) || booking.umbrella;
+            
+            if (newUmbrella < 1 || newUmbrella > 56) {
+                alert('Numero ombrellone non valido. Deve essere tra 1 e 56.');
+                contextMenuBooking = null;
+                return;
+            }
+            
+            const newFormula = getFormula(newUmbrella);
+            
             try {
                 showLoading();
                 
@@ -1277,12 +1302,12 @@
                     .from('beach_bookings')
                     .insert([{
                         guest_name: booking.guest_name,
-                        umbrella: booking.umbrella,
+                        umbrella: newUmbrella,
                         check_in: formatDate(split),
                         check_out: booking.check_out,
                         notes: (booking.notes || '') + ' (Parte 2)',
                         locked: booking.locked,
-                        formula: booking.formula,
+                        formula: newFormula,
                         status: booking.status || 'pending'
                     }]);
                 
@@ -1292,6 +1317,66 @@
             } catch (error) {
                 console.error('Errore:', error);
                 alert('Errore durante la divisione della prenotazione');
+            } finally {
+                hideLoading();
+                contextMenuBooking = null;
+            }
+        }
+        
+        async function handleMerge() {
+            if (!contextMenuBooking) return;
+            
+            const booking = contextMenuBooking;
+            
+            // Trova prenotazioni consecutive dello stesso ospite sullo stesso ombrellone
+            const checkOut = new Date(booking.check_out + 'T00:00:00');
+            
+            // Cerca una prenotazione che inizia esattamente quando finisce questa
+            const nextBooking = bookings.find(b => {
+                const bCheckIn = new Date(b.check_in + 'T00:00:00');
+                return b.id !== booking.id &&
+                       b.umbrella === booking.umbrella &&
+                       b.guest_name === booking.guest_name &&
+                       bCheckIn.getTime() === checkOut.getTime();
+            });
+            
+            if (!nextBooking) {
+                alert('Non ci sono prenotazioni consecutive da unire.\n\nPer unire due prenotazioni devono:\n- Essere dello stesso ospite\n- Essere sullo stesso ombrellone\n- Essere consecutive (senza interruzioni)');
+                contextMenuBooking = null;
+                return;
+            }
+            
+            if (!confirm(`Vuoi unire queste due prenotazioni?\n\n` +
+                        `1) ${booking.guest_name} - Ombr.${booking.umbrella}: ${formatDateIT(booking.check_in)} → ${formatDateIT(booking.check_out)}\n` +
+                        `2) ${nextBooking.guest_name} - Ombr.${nextBooking.umbrella}: ${formatDateIT(nextBooking.check_in)} → ${formatDateIT(nextBooking.check_out)}\n\n` +
+                        `Risultato: ${booking.guest_name} - Ombr.${booking.umbrella}: ${formatDateIT(booking.check_in)} → ${formatDateIT(nextBooking.check_out)}`)) {
+                contextMenuBooking = null;
+                return;
+            }
+            
+            try {
+                showLoading();
+                
+                // Estendi la prima prenotazione fino alla fine della seconda
+                await supabaseClient
+                    .from('beach_bookings')
+                    .update({ 
+                        check_out: nextBooking.check_out
+                    })
+                    .eq('id', booking.id);
+                
+                // Elimina la seconda prenotazione
+                await supabaseClient
+                    .from('beach_bookings')
+                    .delete()
+                    .eq('id', nextBooking.id);
+                
+                await loadBookings();
+                renderCalendar();
+                alert('Prenotazioni unite con successo!');
+            } catch (error) {
+                console.error('Errore:', error);
+                alert('Errore durante l\'unione delle prenotazioni');
             } finally {
                 hideLoading();
                 contextMenuBooking = null;
