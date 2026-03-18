@@ -455,7 +455,7 @@
             
             <div class="control-group" style="flex-grow: 1; max-width: 250px;">
                 <label>🔍 Cerca</label>
-                <input type="text" id="searchGuest" placeholder="Nome ospite..." onkeyup="searchByGuestName()">
+                <input type="text" id="searchGuest" placeholder="Nome ospite..." oninput="debouncedSearch()">
             </div>
             
             <button class="btn btn-primary" onclick="openAddModal()">➕ Nuova Prenotazione</button>
@@ -531,6 +531,9 @@
         <div class="context-menu-item" onclick="handleCheckOut()">
             ⚫ Check-out
         </div>
+        <div class="context-menu-item" onclick="handleSplit()">
+            ✂️ Dividi
+        </div>
         <div class="context-menu-item" onclick="handleEdit()">
             ✏️ Modifica
         </div>
@@ -550,6 +553,7 @@
         let currentYear = 2026;
         let contextMenuBooking = null;
         let draggedBooking = null;
+        let searchTimeout = null;
         
         // Inizializzazione
         document.addEventListener('DOMContentLoaded', async () => {
@@ -1059,17 +1063,18 @@
             const term = document.getElementById('searchGuest').value.toLowerCase().trim();
             
             if (!term) {
-                renderCalendar();
+                // Non fare niente se il campo è vuoto
                 return;
             }
             
             const matches = bookings.filter(b => b.guest_name.toLowerCase().includes(term));
             
             if (matches.length === 0) {
-                alert('Nessuna prenotazione trovata');
+                alert('Nessuna prenotazione trovata per: ' + term);
                 return;
             }
             
+            // Prendi la prima prenotazione trovata e vai a quel mese
             const first = matches[0];
             const date = new Date(first.check_in);
             
@@ -1081,7 +1086,24 @@
             
             renderCalendar();
             
-            alert(`Trovate ${matches.length} prenotazioni per "${term}"`);
+            // Mostra risultati
+            const resultText = `Trovate ${matches.length} prenotazioni per "${term}"`;
+            alert(resultText);
+        }
+        
+        function debouncedSearch() {
+            // Cancella il timeout precedente
+            if (searchTimeout) {
+                clearTimeout(searchTimeout);
+            }
+            
+            // Aspetta 500ms dopo l'ultima digitazione prima di cercare
+            searchTimeout = setTimeout(() => {
+                const term = document.getElementById('searchGuest').value.trim();
+                if (term.length >= 3) {
+                    searchByGuestName();
+                }
+            }, 500);
         }
         
         function previousMonth() {
@@ -1205,6 +1227,71 @@
             } catch (error) {
                 console.error('Errore:', error);
                 alert('Errore durante l\'eliminazione');
+            } finally {
+                hideLoading();
+                contextMenuBooking = null;
+            }
+        }
+        
+        async function handleSplit() {
+            if (!contextMenuBooking) return;
+            
+            const booking = contextMenuBooking;
+            const splitDate = prompt('Inserisci la data di divisione (YYYY-MM-DD).\nLa prenotazione verrà divisa in due parti:');
+            
+            if (!splitDate) {
+                contextMenuBooking = null;
+                return;
+            }
+            
+            // Validazione data
+            const split = new Date(splitDate + 'T00:00:00');
+            const checkIn = new Date(booking.check_in + 'T00:00:00');
+            const checkOut = new Date(booking.check_out + 'T00:00:00');
+            
+            if (isNaN(split.getTime())) {
+                alert('Data non valida. Usa il formato YYYY-MM-DD (es: 2026-06-15)');
+                contextMenuBooking = null;
+                return;
+            }
+            
+            if (split <= checkIn || split >= checkOut) {
+                alert('La data di divisione deve essere tra il check-in e il check-out');
+                contextMenuBooking = null;
+                return;
+            }
+            
+            try {
+                showLoading();
+                
+                // Prima parte: da check-in a split date
+                await supabaseClient
+                    .from('beach_bookings')
+                    .update({ 
+                        check_out: formatDate(split)
+                    })
+                    .eq('id', booking.id);
+                
+                // Seconda parte: da split date a check-out
+                await supabaseClient
+                    .from('beach_bookings')
+                    .insert([{
+                        guest_name: booking.guest_name,
+                        umbrella: booking.umbrella,
+                        check_in: formatDate(split),
+                        check_out: booking.check_out,
+                        notes: (booking.notes || '') + ' (Parte 2)',
+                        locked: booking.locked,
+                        formula: booking.formula,
+                        status: booking.status || 'pending'
+                    }]);
+                
+                await loadBookings();
+                renderCalendar();
+                alert('Prenotazione divisa con successo!');
+            } catch (error) {
+                console.error('Errore:', error);
+                alert('Errore durante la divisione della prenotazione');
             } finally {
                 hideLoading();
                 contextMenuBooking = null;
