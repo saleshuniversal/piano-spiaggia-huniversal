@@ -419,6 +419,23 @@
             background: #FED7D7;
             color: #C53030;
         }
+        
+        /* Overbooking Animation */
+        @keyframes overbooking-blink {
+            0%, 50%, 100% { background: #FC8181; }
+            25%, 75% { background: #E53E3E; }
+        }
+        
+        .booking-cell.overbooking {
+            animation: overbooking-blink 1s infinite;
+            border: 3px solid #C53030 !important;
+        }
+        
+        .booking-cell.overbooking .guest-name-label {
+            color: white !important;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8) !important;
+            font-weight: 900 !important;
+        }
     </style>
 </head>
 <body>
@@ -738,6 +755,12 @@
                     cell.classList.add('status-checked-out');
                 }
                 
+                // Controllo OVERBOOKING
+                if (isOverbooking(umbrellaNum, dateStr)) {
+                    cell.classList.add('overbooking');
+                    cell.title = '⚠️ OVERBOOKING! Più prenotazioni sullo stesso ombrellone!';
+                }
+                
                 const checkIn = new Date(booking.check_in + 'T00:00:00');
                 const checkOut = new Date(booking.check_out + 'T00:00:00');
                 const dayBefore = new Date(checkOut);
@@ -834,6 +857,23 @@
                 
                 return cellDate >= checkIn && cellDate <= dayBefore;
             });
+        }
+        
+        function isOverbooking(umbrella, dateStr) {
+            // Conta quante prenotazioni ci sono per questo ombrellone in questa data
+            const count = bookings.filter(b => {
+                if (b.umbrella !== umbrella) return false;
+                
+                const checkIn = new Date(b.check_in + 'T00:00:00');
+                const checkOut = new Date(b.check_out + 'T00:00:00');
+                const cellDate = new Date(dateStr + 'T00:00:00');
+                const dayBefore = new Date(checkOut);
+                dayBefore.setDate(dayBefore.getDate() - 1);
+                
+                return cellDate >= checkIn && cellDate <= dayBefore;
+            }).length;
+            
+            return count > 1; // Overbooking se ci sono più di 1 prenotazione
         }
         
         function formatDate(date) {
