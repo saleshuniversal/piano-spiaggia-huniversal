@@ -1068,27 +1068,31 @@
                     }
                 }
                 
-                if (criticalDates.length > 0 || warningDates.length > 0) {
-                    hasIssues = true;
-                }
-                
-                let statusClass = 'availability-ok';
-                let statusText = `Min. ${minAvailable}/${range.total} disponibili`;
-                
+                // Mostra SOLO le formule con problemi
                 if (criticalDates.length > 0) {
-                    statusClass = 'availability-full';
-                    statusText = `🔴 PIENO nei giorni: ${criticalDates.join(', ')}`;
+                    hasIssues = true;
+                    const statusClass = 'availability-full';
+                    const statusText = `🔴 PIENO nei giorni: ${criticalDates.join(', ')}`;
+                    
+                    html += `
+                        <div class="availability-row">
+                            <div class="availability-formula" style="color: ${formula.color}">${formula.label}</div>
+                            <div class="availability-count ${statusClass}">${statusText}</div>
+                        </div>
+                    `;
                 } else if (warningDates.length > 0) {
-                    statusClass = 'availability-warning';
-                    statusText = `⚠️ Solo ${minAvailable} rimasti nei giorni: ${warningDates.join(', ')}`;
+                    hasIssues = true;
+                    const statusClass = 'availability-warning';
+                    const statusText = `⚠️ Solo ${minAvailable} ${minAvailable === 1 ? 'rimasto' : 'rimasti'} nei giorni: ${warningDates.join(', ')}`;
+                    
+                    html += `
+                        <div class="availability-row">
+                            <div class="availability-formula" style="color: ${formula.color}">${formula.label}</div>
+                            <div class="availability-count ${statusClass}">${statusText}</div>
+                        </div>
+                    `;
                 }
-                
-                html += `
-                    <div class="availability-row">
-                        <div class="availability-formula" style="color: ${formula.color}">${formula.label}</div>
-                        <div class="availability-count ${statusClass}">${statusText}</div>
-                    </div>
-                `;
+                // Se non ci sono problemi, NON aggiungere nulla per questa formula
             });
             
             const panel = document.getElementById('availabilityPanel');
@@ -1695,4 +1699,3 @@
     </script>
 </body>
 </html>
- 
