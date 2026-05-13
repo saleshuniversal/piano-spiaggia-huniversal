@@ -1080,7 +1080,9 @@
                             <div class="availability-count ${statusClass}">${statusText}</div>
                         </div>
                     `;
-                } else if (warningDates.length > 0) {
+                }
+                
+                if (warningDates.length > 0) {
                     hasIssues = true;
                     const statusClass = 'availability-warning';
                     const statusText = `⚠️ Solo ${minAvailable} ${minAvailable === 1 ? 'rimasto' : 'rimasti'} nei giorni: ${warningDates.join(', ')}`;
