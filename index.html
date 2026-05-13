@@ -436,6 +436,79 @@
             text-shadow: 1px 1px 3px rgba(0,0,0,0.8) !important;
             font-weight: 900 !important;
         }
+        
+        /* Availability Panel */
+        .availability-panel {
+            background: var(--white);
+            border: 2px solid var(--gray-300);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .availability-panel h3 {
+            margin: 0 0 12px 0;
+            font-size: 16px;
+            color: var(--gray-800);
+        }
+        
+        .availability-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+        
+        .availability-formula {
+            font-weight: 600;
+            min-width: 90px;
+        }
+        
+        .availability-count {
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        .availability-ok {
+            background: #C6F6D5;
+            color: #22543D;
+        }
+        
+        .availability-warning {
+            background: #FED7AA;
+            color: #7C2D12;
+        }
+        
+        .availability-full {
+            background: #FED7D7;
+            color: #742A2A;
+        }
+        
+        /* Date column highlighting */
+        .calendar-grid .booking-cell[data-availability="warning"] {
+            background-color: rgba(254, 215, 170, 0.3) !important;
+        }
+        
+        .calendar-grid .booking-cell[data-availability="full"] {
+            background-color: rgba(254, 215, 215, 0.3) !important;
+        }
+        
+        .header-day.availability-warning {
+            background: linear-gradient(135deg, var(--mare), #FED7AA) !important;
+        }
+        
+        .header-day.availability-full {
+            background: linear-gradient(135deg, var(--mare), #FEB2B2) !important;
+            animation: pulse-red 2s infinite;
+        }
+        
+        @keyframes pulse-red {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
     </style>
 </head>
 <body>
@@ -477,6 +550,12 @@
             
             <button class="btn btn-primary" onclick="openAddModal()">➕ Nuova Prenotazione</button>
             <button class="btn btn-secondary" onclick="refreshData()">🔄</button>
+        </div>
+        
+        <!-- Availability Panel -->
+        <div id="availabilityPanel" class="availability-panel" style="display: none;">
+            <h3>📊 Disponibilità Ombrelloni per il Mese</h3>
+            <div id="availabilityContent"></div>
         </div>
         
         <div class="calendar-wrapper">
@@ -671,6 +750,15 @@
                 const cell = document.createElement('div');
                 cell.className = 'header-mare';
                 const date = new Date(currentYear, currentMonth, day);
+                const dateStr = formatDate(date);
+                const availStatus = getWorstAvailabilityForDate(dateStr);
+                
+                if (availStatus === 'warning') {
+                    cell.classList.add('availability-warning');
+                } else if (availStatus === 'full') {
+                    cell.classList.add('availability-full');
+                }
+                
                 const dayNames = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
                 cell.innerHTML = `<div style="font-size: 14px;">${day}</div><div style="font-size: 7px; opacity: 0.8;">${dayNames[date.getDay()]}</div>`;
                 calendar.appendChild(cell);
@@ -731,6 +819,9 @@
                     }
                 }
             });
+            
+            // Aggiorna pannello disponibilità
+            updateAvailabilityPanel();
         }
         
         function createBookingCell(umbrellaNum, day, formula) {
@@ -893,6 +984,122 @@
             if (umbrellaNum >= 13 && umbrellaNum <= 40) return 'abbraccio';
             if (umbrellaNum >= 41 && umbrellaNum <= 56) return 'carezza';
             return '';
+        }
+        
+        function getUmbrellasForFormula(formula) {
+            if (formula === 'emozione') return { min: 1, max: 12, total: 12 };
+            if (formula === 'abbraccio') return { min: 13, max: 40, total: 28 };
+            if (formula === 'carezza') return { min: 41, max: 56, total: 16 };
+            return { min: 0, max: 0, total: 0 };
+        }
+        
+        function getAvailabilityForDate(dateStr, formula) {
+            const range = getUmbrellasForFormula(formula);
+            const occupiedUmbrellas = new Set();
+            
+            bookings.forEach(b => {
+                if (b.umbrella < range.min || b.umbrella > range.max) return;
+                
+                const checkIn = new Date(b.check_in + 'T00:00:00');
+                const checkOut = new Date(b.check_out + 'T00:00:00');
+                const cellDate = new Date(dateStr + 'T00:00:00');
+                const dayBefore = new Date(checkOut);
+                dayBefore.setDate(dayBefore.getDate() - 1);
+                
+                if (cellDate >= checkIn && cellDate <= dayBefore) {
+                    occupiedUmbrellas.add(b.umbrella);
+                }
+            });
+            
+            const available = range.total - occupiedUmbrellas.size;
+            return {
+                total: range.total,
+                occupied: occupiedUmbrellas.size,
+                available: available
+            };
+        }
+        
+        function getWorstAvailabilityForDate(dateStr) {
+            const formulas = ['emozione', 'abbraccio', 'carezza'];
+            let worstStatus = 'ok'; // ok, warning, full
+            
+            formulas.forEach(formula => {
+                const avail = getAvailabilityForDate(dateStr, formula);
+                if (avail.available === 0) {
+                    worstStatus = 'full';
+                } else if (avail.available <= 2 && worstStatus !== 'full') {
+                    worstStatus = 'warning';
+                }
+            });
+            
+            return worstStatus;
+        }
+        
+        function updateAvailabilityPanel() {
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const formulas = [
+                { name: 'emozione', label: '🟡 Emozione', color: 'var(--gold)' },
+                { name: 'abbraccio', label: '⚪ Abbraccio', color: 'var(--silver)' },
+                { name: 'carezza', label: '🟫 Carezza', color: 'var(--bronze)' }
+            ];
+            
+            let hasIssues = false;
+            let html = '';
+            
+            formulas.forEach(formula => {
+                const range = getUmbrellasForFormula(formula.name);
+                let minAvailable = range.total;
+                let criticalDates = [];
+                let warningDates = [];
+                
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const date = new Date(currentYear, currentMonth, day);
+                    const dateStr = formatDate(date);
+                    const avail = getAvailabilityForDate(dateStr, formula.name);
+                    
+                    if (avail.available < minAvailable) {
+                        minAvailable = avail.available;
+                    }
+                    
+                    if (avail.available === 0) {
+                        criticalDates.push(day);
+                    } else if (avail.available <= 2) {
+                        warningDates.push(day);
+                    }
+                }
+                
+                if (criticalDates.length > 0 || warningDates.length > 0) {
+                    hasIssues = true;
+                }
+                
+                let statusClass = 'availability-ok';
+                let statusText = `Min. ${minAvailable}/${range.total} disponibili`;
+                
+                if (criticalDates.length > 0) {
+                    statusClass = 'availability-full';
+                    statusText = `🔴 PIENO nei giorni: ${criticalDates.join(', ')}`;
+                } else if (warningDates.length > 0) {
+                    statusClass = 'availability-warning';
+                    statusText = `⚠️ Solo ${minAvailable} rimasti nei giorni: ${warningDates.join(', ')}`;
+                }
+                
+                html += `
+                    <div class="availability-row">
+                        <div class="availability-formula" style="color: ${formula.color}">${formula.label}</div>
+                        <div class="availability-count ${statusClass}">${statusText}</div>
+                    </div>
+                `;
+            });
+            
+            const panel = document.getElementById('availabilityPanel');
+            const content = document.getElementById('availabilityContent');
+            
+            if (hasIssues) {
+                content.innerHTML = html;
+                panel.style.display = 'block';
+            } else {
+                panel.style.display = 'none';
+            }
         }
         
         function openAddModal() {
@@ -1488,3 +1695,4 @@
     </script>
 </body>
 </html>
+ 
