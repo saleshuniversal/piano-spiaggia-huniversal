@@ -509,6 +509,30 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
         }
+        
+        /* Highlight animation for search results */
+        @keyframes highlight-pulse {
+            0%, 100% { 
+                box-shadow: 0 0 0 0 rgba(72, 187, 120, 0);
+                border: 3px solid var(--gray-800);
+            }
+            50% { 
+                box-shadow: 0 0 20px 5px rgba(72, 187, 120, 0.8);
+                border: 3px solid #48BB78;
+            }
+        }
+        
+        .booking-cell.highlighted {
+            animation: highlight-pulse 1.5s ease-in-out 3;
+            position: relative;
+            z-index: 100;
+        }
+        
+        .booking-cell.highlighted .guest-name-label {
+            color: #22543D !important;
+            font-weight: 900 !important;
+            text-shadow: 0 0 10px rgba(72, 187, 120, 0.8) !important;
+        }
     </style>
 </head>
 <body>
@@ -653,6 +677,7 @@
         let contextMenuBooking = null;
         let draggedBooking = null;
         let searchTimeout = null;
+        let highlightedBookings = [];
         
         // Inizializzazione
         document.addEventListener('DOMContentLoaded', async () => {
@@ -850,6 +875,11 @@
                 if (isOverbooking(umbrellaNum, dateStr)) {
                     cell.classList.add('overbooking');
                     cell.title = '⚠️ OVERBOOKING! Più prenotazioni sullo stesso ombrellone!';
+                }
+                
+                // Evidenziazione ricerca
+                if (highlightedBookings.includes(booking.id)) {
+                    cell.classList.add('highlighted');
                 }
                 
                 const checkIn = new Date(booking.check_in + 'T00:00:00');
@@ -1332,7 +1362,7 @@
             
             // Prendi la prima prenotazione trovata e vai a quel mese
             const first = matches[0];
-            const date = new Date(first.check_in);
+            const date = new Date(first.check_in + 'T00:00:00');
             
             currentMonth = date.getMonth();
             currentYear = date.getFullYear();
@@ -1340,7 +1370,16 @@
             document.getElementById('monthSelect').value = currentMonth;
             document.getElementById('yearSelect').value = currentYear;
             
+            // Evidenzia tutte le prenotazioni trovate
+            highlightedBookings = matches.map(m => m.id);
+            
             renderCalendar();
+            
+            // Rimuovi evidenziazione dopo 4.5 secondi (3 lampeggi)
+            setTimeout(() => {
+                highlightedBookings = [];
+                renderCalendar();
+            }, 4500);
             
             // Mostra risultati
             const resultText = `Trovate ${matches.length} prenotazioni per "${term}"`;
